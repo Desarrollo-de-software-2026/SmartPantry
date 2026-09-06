@@ -23,10 +23,6 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: angular
-
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +31,13 @@ jobs:
           node-version: 24
 
       - run: corepack enable
+        working-directory: angular
+
       - run: yarn install --frozen-lockfile
+        working-directory: angular
+
       - run: yarn build
+        working-directory: angular
+
       - run: yarn test --watch=false --browsers=ChromeHeadless
+        working-directory: angular
