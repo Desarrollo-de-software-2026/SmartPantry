@@ -9,9 +9,72 @@ Repositorio del Trabajo Práctico Integrador de Desarrollo de Software 2026.
 - Silva Luciano **TorianNomas**
 - Prado Valentina **bluerose04**
 
-## Cómo ejecutar
+## Requisitos
 
-Pendiente de TP 03.
+- Visual Studio 2022 o 2026 con Desarrollo de ASP.NET y web.
+- Node.js 24.15.0 o superior.
+- Yarn 1.22.x, SQL Server Developer o Express.
+- SQL Server Management Studio (SSMS).
+- ABP Studio.
+- Git.
+
+## Configuración local
+
+Configurar la cadena de conexión en los siguientes archivos:
+ 
+- `src/SmartPantry.DbMigrator/appsettings.json`
+- `src/SmartPantry.HttpApi.Host/appsettings.json`
+
+Cadena utilizada: 
+Server=(localdb)\MSSQLLocalDB;Database=SmartPantry;Trusted_Connection=True
+
+## Puesta en marcha
+
+### Restaurar dependencias ejecutando:
+
+abp install-libs
+dotnet restore SmartPantry.slnx
+dotnet build SmartPantry.slnx --configuration Debug --no-restore
+
+### Crear la base de datos ejecutando:
+
+dotnet run --project .\src\SmartPantry.DbMigrator
+
+### Iniciar el backend ejecutando:
+
+dotnet run --project .\src\SmartPantry.HttpApi.Host
+
+### Iniciar Angular:
+
+cd angular
+yarn start
+
+
+## URLs locales
+
+Backend: https://localhost:44320
+
+Swagger: https://localhost:44320/swagger
+
+Frontend: http://localhost:4200
+
+## Verificación
+
+Se verificó correctamente:
+
+- Compilación de la solución .NET.
+- Ejecución de DbMigrator.
+- Creación de la base de datos SmartPantry.
+- Creación de las tablas base de ABP.
+- Ejecución de HttpApi.Host.
+- Ejecución de Angular.
+
+
+## Detener los procesos
+
+- Visual Studio: Shift + F5.
+- Terminal: Ctrl + C.
+
 
 ## About this solution
 
