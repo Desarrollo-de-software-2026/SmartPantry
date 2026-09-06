@@ -35,11 +35,18 @@ public abstract class BookAppService_Tests<TStartupModule> : SmartPantryApplicat
     [Fact]
     public async Task Should_Create_A_Valid_Book()
     {
+        //Arrange
+        var existingBooks = await _bookAppService.GetListAsync(
+            new PagedAndSortedResultRequestDto()
+        );
+        var authorId = existingBooks.Items.First().AuthorId;
+
         //Act
         var result = await _bookAppService.CreateAsync(
             new CreateUpdateBookDto
             {
                 Name = "New test book 42",
+                AuthorId = authorId,
                 Price = 10,
                 PublishDate = DateTime.Now,
                 Type = BookType.ScienceFiction
@@ -50,7 +57,7 @@ public abstract class BookAppService_Tests<TStartupModule> : SmartPantryApplicat
         result.Id.ShouldNotBe(Guid.Empty);
         result.Name.ShouldBe("New test book 42");
     }
-    
+
     [Fact]
     public async Task Should_Not_Create_A_Book_Without_Name()
     {
