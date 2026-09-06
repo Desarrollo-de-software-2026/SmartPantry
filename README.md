@@ -23,7 +23,6 @@ Repositorio del Trabajo Práctico Integrador de Desarrollo de Software 2026.
 Configurar la cadena de conexión en los siguientes archivos:
  
 - `src/SmartPantry.DbMigrator/appsettings.json`
-
 - `src/SmartPantry.HttpApi.Host/appsettings.json`
 
 Cadena utilizada: 
@@ -151,4 +150,3 @@ You can see the following resources to learn more about your solution and the AB
 
 * [Web Application Development Tutorial](https://abp.io/docs/latest/tutorials/book-store/part-1)
 * [Application Startup Template](https://abp.io/docs/latest/startup-templates/application/index)
-
