@@ -193,13 +193,7 @@
           "options": {
             "tsConfig": "tsconfig.spec.json",
             "buildTarget": "SmartPantry:build",
-            "vitest": {
-              "config": {
-                "esbuild": {
-                  "target": "es2022"
-                }
-              }
-            }
+            "karmaConfig": "karma.conf.js"
           }
         },
         "lint": {
