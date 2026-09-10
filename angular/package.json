@@ -55,8 +55,11 @@
     "typescript": "~6.0.3",
      "vitest": "^4.0.0"
     },
-  "browserslist": [
+    "browserslist": [
+  "> 0.5%",
   "last 2 versions",
-  "> 1% market share"
+  "Firefox ESR",
+  "not dead",
+  "IE 11"
 ]
 }
