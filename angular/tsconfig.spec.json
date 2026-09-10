@@ -1,11 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/spec",
     "module": "esnext",
-    "types": [
-      "vitest/globals"
-    ]
+    "target": "es2022",
+    "moduleResolution": "bundler"
   },
   "include": [
     "src/**/*.spec.ts",
