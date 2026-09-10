@@ -55,9 +55,11 @@
     "typescript": "~6.0.3",
      "vitest": "^4.0.0"
     },
-    "browserslist": [
-  "last 2 versions",
-  "Firefox ESR",
-  "not dead"
+   "browserslist": [
+  "last 2 Chrome versions",
+  "last 1 Firefox version",
+  "last 2 Edge major versions",
+  "last 2 Safari major versions",
+  "last 2 iOS major versions"
 ]
 }
