@@ -3,7 +3,8 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "es2022",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "types": ["jest"]
   },
   "include": [
     "src/**/*.spec.ts",
