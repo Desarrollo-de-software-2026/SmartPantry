@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DynamicLayoutComponent } from '@abp/ng.core';
 import { LoaderBarComponent } from '@abp/ng.theme.shared';
 
