@@ -28,12 +28,26 @@ public class ProductoAppService : SmartPantryAppService, IProductoAppService
 
         await _productoRepository.InsertAsync(producto);
 
-        return ObjectMapper.Map<Producto, ProductoDto>(producto);
+        return new ProductoDto
+        {
+            Id = producto.Id,
+            Nombre = producto.Nombre,
+            Marca = producto.Marca,
+            Categoria = producto.Categoria,
+            UrlImagen = producto.UrlImagen
+        };
     }
 
     public async Task<ProductoDto> GetAsync(Guid id)
     {
         var producto = await _productoRepository.GetAsync(id);
-        return ObjectMapper.Map<Producto, ProductoDto>(producto);
+        return new ProductoDto
+        {
+            Id = producto.Id,
+            Nombre = producto.Nombre,
+            Marca = producto.Marca,
+            Categoria = producto.Categoria,
+            UrlImagen = producto.UrlImagen
+        };
     }
 }

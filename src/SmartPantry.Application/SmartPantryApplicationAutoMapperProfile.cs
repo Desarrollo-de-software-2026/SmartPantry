@@ -10,5 +10,6 @@ public class SmartPantryApplicationAutoMapperProfile : Profile
     {
         // Mapeo para la operación RF-08
         CreateMap<Producto, ProductoDto>();
+        CreateMap<CreateProductoDto, Producto>();
     }
 }
