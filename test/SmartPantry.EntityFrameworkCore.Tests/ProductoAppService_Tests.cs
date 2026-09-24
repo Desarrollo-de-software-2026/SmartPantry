@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Shouldly;
+using SmartPantry.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
-using Shouldly;
 using Volo.Abp.Validation;
 using Xunit;
 
 namespace SmartPantry.Productos;
 
-// Agrega <SmartPantryApplicationTestModule> aquí:
-public class ProductoAppService_Tests : SmartPantryApplicationTestBase<SmartPantryApplicationTestModule>
+public class ProductoAppService_Tests : SmartPantryEntityFrameworkCoreTestBase
 {
     private readonly IProductoAppService _productoAppService;
 
@@ -24,12 +24,12 @@ public class ProductoAppService_Tests : SmartPantryApplicationTestBase<SmartPant
         {
             Nombre = "Leche Descremada",
             Marca = "  La Serenisima  ",
-            Categoria = " Lácteos "
+            Categoria = " Lácteos ",
+            UrlImagen = "https://ejemplo.com/imagenes/leche.jpg" // <-- AGREGAR AQUÍ
         };
 
         // Act
-        var createdResult =
-            await _productoAppService.CreateAsync(input);
+        var createdResult = await _productoAppService.CreateAsync(input);
 
         // Assert
         createdResult.ShouldNotBeNull();
@@ -37,11 +37,10 @@ public class ProductoAppService_Tests : SmartPantryApplicationTestBase<SmartPant
         createdResult.Nombre.ShouldBe("Leche Descremada");
         createdResult.Marca.ShouldBe("La Serenisima");
         createdResult.Categoria.ShouldBe("Lácteos");
+        createdResult.UrlImagen.ShouldBe("https://ejemplo.com/imagenes/leche.jpg");
 
         // Get and verify
-        var fetchedResult =
-            await _productoAppService.GetAsync(createdResult.Id);
-
+        var fetchedResult = await _productoAppService.GetAsync(createdResult.Id);
         fetchedResult.ShouldNotBeNull();
         fetchedResult.Id.ShouldBe(createdResult.Id);
         fetchedResult.Nombre.ShouldBe(createdResult.Nombre);

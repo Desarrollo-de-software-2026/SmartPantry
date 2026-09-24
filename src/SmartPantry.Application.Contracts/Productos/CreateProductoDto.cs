@@ -17,6 +17,7 @@ public class CreateProductoDto
     [StringLength(ProductoConsts.MaxCategoriaLength)]
     public string Categoria { get; set; }
 
+    [Required]
     [StringLength(ProductoConsts.MaxUrlImagenLength)]
-    public string UrlImagen { get; set; }
+    public string UrlImagen { get; set; } = string.Empty;
 }
