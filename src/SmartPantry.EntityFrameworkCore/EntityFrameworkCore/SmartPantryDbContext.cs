@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using SmartPantry.Authors;
 using SmartPantry.Books;
+using SmartPantry.Productos;
+using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -11,9 +12,9 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
 
 namespace SmartPantry.EntityFrameworkCore;
 
@@ -28,6 +29,8 @@ public class SmartPantryDbContext :
     public DbSet<Author> Authors { get; set; }
 
     public DbSet<Book> Books { get; set; }
+
+    public DbSet<Producto> Productos { get; set; }
 
     #region Entities from the modules
 
@@ -74,6 +77,17 @@ public class SmartPantryDbContext :
         builder.ConfigureIdentity();
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
+
+        builder.Entity<Producto>(b =>
+        {
+            b.ToTable(SmartPantryConsts.DbTablePrefix + "Productos", SmartPantryConsts.DbSchema);
+            b.ConfigureByConvention(); // Configura propiedades base de ABP (Id, auditoría)
+
+            b.Property(x => x.Nombre).IsRequired().HasMaxLength(ProductoConsts.MaxNombreLength);
+            b.Property(x => x.Marca).IsRequired().HasMaxLength(ProductoConsts.MaxMarcaLength);
+            b.Property(x => x.Categoria).IsRequired().HasMaxLength(ProductoConsts.MaxCategoriaLength);
+            b.Property(x => x.UrlImagen).HasMaxLength(ProductoConsts.MaxUrlImagenLength);
+        });
 
         builder.Entity<Author>(b =>
         {
