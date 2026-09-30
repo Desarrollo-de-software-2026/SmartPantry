@@ -428,4 +428,18 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
+# Archivos de estado de paquetes de frontend / Yarn
+yarn.lock
+package-lock.json
+**/node_modules/
+
+# Librerias y estaticos de ABP
 **/wwwroot/libs/
+
+# Compilacion y temporales de .NET
+**/bin/
+**/obj/
+.vscode/
+
+# Configuración local con secretos
+*.secrets.json
