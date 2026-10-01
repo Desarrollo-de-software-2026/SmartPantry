@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using SmartPantry.Productos;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using SmartPantry.Books;
+
 
 namespace SmartPantry;
 
@@ -11,5 +12,10 @@ public class SmartPantryApplicationAutoMapperProfile : Profile
         // Mapeo para la operación RF-08
         CreateMap<Producto, ProductoDto>();
         CreateMap<CreateProductoDto, Producto>();
+        CreateMap<UpdateProductoDto, Producto>();
+
+        CreateMap<Book, BookDto>()
+            .ForMember(dto => dto.AuthorName, options => options.Ignore());
+        CreateMap<CreateUpdateBookDto, Book>();
     }
 }
