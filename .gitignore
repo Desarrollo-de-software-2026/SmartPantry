@@ -443,5 +443,3 @@ package-lock.json
 
 # Configuración local con secretos
 *.secrets.json
-
-angular/
