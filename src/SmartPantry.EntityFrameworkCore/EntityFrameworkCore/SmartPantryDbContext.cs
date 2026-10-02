@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SmartPantry.Authors;
 using SmartPantry.Books;
+using SmartPantry.Despensa;
 using SmartPantry.Productos;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -62,10 +63,58 @@ public class SmartPantryDbContext :
     {
 
     }
+    public DbSet<SmartPantry.Despensas.Despensa> Despensas { get; set; }
+    public DbSet<ItemDespensa> ItemsDespensa { get; set; }
+    public DbSet<AdvertenciaVencimiento> AdvertenciasVencimiento { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Owned<Cantidad>();
+        builder.Owned<FechaVencimiento>();
+        builder.Owned<Nota>();
         base.OnModelCreating(builder);
+        // Mapeo de Despensa e Items
+        builder.Entity<SmartPantry.Despensas.Despensa>(b =>
+        {
+            b.ToTable(SmartPantryConsts.DbTablePrefix + "Despensas", SmartPantryConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Relación 1 a N con ItemDespensa
+            b.HasMany(d => d.Items).WithOne().HasForeignKey("DespensaId").IsRequired();
+        });
+
+        builder.Entity<ItemDespensa>(b =>
+        {
+            b.ToTable(SmartPantryConsts.DbTablePrefix + "ItemsDespensa", SmartPantryConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Mapeo de Value Objects embebidos
+            b.OwnsOne(i => i.Cantidad, c =>
+            {
+                c.Property(p => p.Monto).HasColumnName("CantidadMonto");
+                c.Property(p => p.Unidad).HasColumnName("CantidadUnidad").HasMaxLength(20);
+            });
+
+            b.OwnsOne(i => i.FechaVencimiento, f =>
+            {
+                f.Property(p => p.FechaVenc).HasColumnName("FechaVencimiento");
+            });
+
+            b.OwnsOne(i => i.Nota, n =>
+            {
+                n.Property(p => p.Texto).HasColumnName("NotaTexto").HasMaxLength(250);
+            });
+        });
+
+        // Mapeo de Advertencias de Vencimiento
+        builder.Entity<AdvertenciaVencimiento>(b =>
+        {
+            b.ToTable(SmartPantryConsts.DbTablePrefix + "AdvertenciasVencimiento", SmartPantryConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Índice único compuesto para asegurar idempotencia (TP08)
+            b.HasIndex(a => new { a.ItemDespensaId, a.TipoAdvertencia }).IsUnique();
+        });
 
         /* Include modules to your migration db context */
 
@@ -106,6 +155,7 @@ public class SmartPantryDbContext :
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
             b.HasOne<Author>().WithMany().HasForeignKey(x => x.AuthorId).IsRequired();
         });
+
 
         /* Configure your own tables/entities inside here */
 
