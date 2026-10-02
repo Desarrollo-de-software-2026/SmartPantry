@@ -6,39 +6,42 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
-using OpenIddict.Validation.AspNetCore;
-using OpenIddict.Server.AspNetCore;
-using SmartPantry.EntityFrameworkCore;
-using SmartPantry.MultiTenancy;
-using SmartPantry.HealthChecks;
 using Microsoft.OpenApi;
+using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
+using SmartPantry.EntityFrameworkCore;
+using SmartPantry.HealthChecks;
+using SmartPantry.HttpApi.Host.Clients;
+using SmartPantry.MultiTenancy;
+using SmartPantry.Productos;
 using Volo.Abp;
-using Volo.Abp.Studio;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.Autofac;
-using Volo.Abp.Localization;
-using Volo.Abp.Modularity;
-using Volo.Abp.UI.Navigation.Urls;
-using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.AspNetCore.Mvc.Libs;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-using Microsoft.AspNetCore.Hosting;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.Autofac;
 using Volo.Abp.Identity;
+using Volo.Abp.Localization;
+using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
-using Volo.Abp.Swashbuckle;
-using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Security.Claims;
+using Volo.Abp.Studio;
+using Volo.Abp.Studio.Client.AspNetCore;
+using Volo.Abp.Swashbuckle;
+using Volo.Abp.UI.Navigation.Urls;
+using Volo.Abp.VirtualFileSystem;
 
 namespace SmartPantry;
 
@@ -61,16 +64,10 @@ public class SmartPantryHttpApiHostModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
-        PreConfigure<OpenIddictBuilder>(builder =>
+        PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
         {
-            builder.AddValidation(options =>
-            {
-                options.AddAudiences("SmartPantry");
-                options.UseLocalServer();
-                options.UseAspNetCore();
-            });
+            serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
         });
-
         if (!hostingEnvironment.IsDevelopment())
         {
             PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
@@ -80,7 +77,7 @@ public class SmartPantryHttpApiHostModule : AbpModule
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
+               // serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
                 serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
             });
         }
@@ -90,6 +87,24 @@ public class SmartPantryHttpApiHostModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
+
+        context.Services.AddOpenIddict()
+    .AddServer(options =>
+    {
+        options.UseAspNetCore().EnableTokenEndpointPassthrough();
+        options.AddDevelopmentEncryptionCertificate();
+        options.AddDevelopmentSigningCertificate();
+    })
+    .AddValidation(options =>
+    {
+        options.UseLocalServer();
+        options.UseAspNetCore();
+    });
+
+        Configure<AbpMvcLibsOptions>(options =>
+        {
+            options.CheckLibs = false;
+        });
 
         if (!configuration.GetValue<bool>("App:DisablePII"))
         {
@@ -118,6 +133,18 @@ public class SmartPantryHttpApiHostModule : AbpModule
                 .AddRazorRuntimeCompilation();
         }
 
+        context.Services.AddHttpClient<
+    IExternalProductCatalogClient,
+    OpenFoodFactsProductCatalogClient>(client =>
+    {
+        client.BaseAddress = new Uri("https://world.openfoodfacts.org/api/v3/");
+        client.Timeout = TimeSpan.FromSeconds(15);
+        client.DefaultRequestHeaders.UserAgent.Add(
+            new System.Net.Http.Headers.ProductInfoHeaderValue("SmartPantry", "1.0"));
+        client.DefaultRequestHeaders.UserAgent.Add(
+            new System.Net.Http.Headers.ProductInfoHeaderValue("(+https://github.com/utn-frcu-isi-ds)"));
+    });
+
         ConfigureStudio(hostingEnvironment);
         ConfigureAuthentication(context);
         ConfigureUrls(configuration);
@@ -127,6 +154,8 @@ public class SmartPantryHttpApiHostModule : AbpModule
         ConfigureSwagger(context, configuration);
         ConfigureVirtualFileSystem(context);
         ConfigureCors(context, configuration);
+
+    
     }
 
     private void ConfigureStudio(IHostEnvironment hostingEnvironment)
@@ -297,6 +326,7 @@ public class SmartPantryHttpApiHostModule : AbpModule
 
             var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
             options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
+            options.OAuthScopes("SmartPantry");
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
