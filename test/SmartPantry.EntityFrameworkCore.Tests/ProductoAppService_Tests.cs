@@ -1,13 +1,14 @@
-﻿using Shouldly;
-using SmartPantry.EntityFrameworkCore;
+using Shouldly;
 using System;
 using System.Threading.Tasks;
-using Volo.Abp.Validation;
+using Volo.Abp;
+using Volo.Abp.Domain.Entities;
 using Xunit;
+using SmartPantry.EntityFrameworkCore;
 
 namespace SmartPantry.Productos;
 
-public class ProductoAppService_Tests : SmartPantryEntityFrameworkCoreTestBase
+public class ProductoAppService_Tests: SmartPantryApplicationTestBase<SmartPantryEntityFrameworkCoreTestModule>
 {
     private readonly IProductoAppService _productoAppService;
 
@@ -17,50 +18,105 @@ public class ProductoAppService_Tests : SmartPantryEntityFrameworkCoreTestBase
     }
 
     [Fact]
-    public async Task Should_Create_And_Get_Producto_Successfully()
+    public async Task Should_Perform_Complete_Crud_Flow()
     {
-        // Arrange
-        var input = new CreateProductoDto
+        // CREATE
+        var createInput = new CreateProductoDto
         {
-            Nombre = "Leche Descremada",
-            Marca = "  La Serenisima  ",
-            Categoria = " Lácteos ",
-            UrlImagen = "https://ejemplo.com/imagenes/leche.jpg" // <-- AGREGAR AQUÍ
+            Nombre = "Arroz Integral",
+            Marca = "Marolio",
+            Categoria = "Almacenes",
+            UrlImagen = "https://example.com/arroz.png"
         };
 
-        // Act
-        var createdResult = await _productoAppService.CreateAsync(input);
+        var created = await _productoAppService.CreateAsync(createInput);
 
-        // Assert
-        createdResult.ShouldNotBeNull();
-        createdResult.Id.ShouldNotBe(Guid.Empty);
-        createdResult.Nombre.ShouldBe("Leche Descremada");
-        createdResult.Marca.ShouldBe("La Serenisima");
-        createdResult.Categoria.ShouldBe("Lácteos");
-        createdResult.UrlImagen.ShouldBe("https://ejemplo.com/imagenes/leche.jpg");
+        created.Id.ShouldNotBe(Guid.Empty);
+        created.Nombre.ShouldBe("Arroz Integral");
 
-        // Get and verify
-        var fetchedResult = await _productoAppService.GetAsync(createdResult.Id);
-        fetchedResult.ShouldNotBeNull();
-        fetchedResult.Id.ShouldBe(createdResult.Id);
-        fetchedResult.Nombre.ShouldBe(createdResult.Nombre);
+        // GET
+        var fetched = await _productoAppService.GetAsync(created.Id);
+
+        fetched.ShouldNotBeNull();
+        fetched.Id.ShouldBe(created.Id);
+
+        // LIST
+        var pagedList = await _productoAppService.GetListAsync(
+            new GetProductosInput
+            {
+                MaxResultCount = 10
+            });
+
+        pagedList.TotalCount.ShouldBeGreaterThan(0);
+        pagedList.Items.ShouldContain(p => p.Id == created.Id);
+
+        // UPDATE
+        var updateInput = new UpdateProductoDto
+        {
+            Nombre = "Arroz Doble Carolina",
+            Marca = "Marolio",
+            Categoria = "Almacenes",
+            UrlImagen = "https://example.com/arroz2.png"
+        };
+
+        await _productoAppService.UpdateAsync(created.Id, updateInput);
+
+        var updated = await _productoAppService.GetAsync(created.Id);
+
+        updated.Nombre.ShouldBe("Arroz Doble Carolina");
+
+        // DELETE
+        await _productoAppService.DeleteAsync(created.Id);
+
+        await Should.ThrowAsync<EntityNotFoundException>(
+            async () =>
+            {
+                await _productoAppService.GetAsync(created.Id);
+            });
     }
 
     [Fact]
-    public async Task Should_Not_Create_Producto_Without_Mandatory_Fields()
+    public void Should_Normalize_Data_When_Updating()
     {
-        // Arrange
-        var input = new CreateProductoDto
-        {
-            Nombre = "",
-            Marca = "La Serenisima",
-            Categoria = "Lácteos"
-        };
+        var producto = new Producto(
+            Guid.NewGuid(),
+            "Leche",
+            "Marca",
+            "Lacteos",
+            null
+        );
 
-        // Act & Assert
-        await Should.ThrowAsync<AbpValidationException>(async () =>
+        producto.Actualizar(
+            "  Leche Entera  ",
+            "  Marca Nueva  ",
+            "  Lacteos  ",
+            null
+        );
+
+        producto.Nombre.ShouldBe("Leche Entera");
+        producto.Marca.ShouldBe("Marca Nueva");
+        producto.Categoria.ShouldBe("Lacteos");
+    }
+
+    [Fact]
+    public void Should_Reject_Invalid_Update()
+    {
+        var producto = new Producto(
+            Guid.NewGuid(),
+            "Leche",
+            "Marca",
+            "Lacteos",
+            null
+        );
+
+        Should.Throw<ArgumentException>(() =>
         {
-            await _productoAppService.CreateAsync(input);
+            producto.Actualizar(
+                "",
+                "Marca",
+                "Lacteos",
+                null
+            );
         });
     }
 }

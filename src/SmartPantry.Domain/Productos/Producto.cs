@@ -11,33 +11,66 @@ public class Producto : AuditedAggregateRoot<Guid>
     public string Categoria { get; private set; }
     public string UrlImagen { get; private set; }
 
-    private Producto() { } // Requerido por EF Core
+    private Producto()
+    {
+        // Requerido por EF Core
+    }
 
-    public Producto(Guid id, string nombre, string marca, string categoria, string urlImagen) : base(id)
+    public Producto(
+        Guid id,
+        string nombre,
+        string marca,
+        string categoria,
+        string urlImagen)
+        : base(id)
     {
         SetNombre(nombre);
         SetMarca(marca);
         SetCategoria(categoria);
 
-        // UrlImagen puede ser opcional o aceptar nulos dependiendo de tus reglas de negocio
+        UrlImagen = urlImagen?.Trim();
+    }
+
+    public void Actualizar(
+        string nombre,
+        string marca,
+        string categoria,
+        string urlImagen)
+    {
+        SetNombre(nombre);
+        SetMarca(marca);
+        SetCategoria(categoria);
+
         UrlImagen = urlImagen?.Trim();
     }
 
     private void SetNombre(string nombre)
     {
-        Check.NotNullOrWhiteSpace(nombre, nameof(nombre), ProductoConsts.MaxNombreLength);
+        Check.NotNullOrWhiteSpace(
+            nombre,
+            nameof(nombre),
+            ProductoConsts.MaxNombreLength);
+
         Nombre = nombre.Trim();
     }
 
     private void SetMarca(string marca)
     {
-        Check.NotNullOrWhiteSpace(marca, nameof(marca), ProductoConsts.MaxMarcaLength);
+        Check.NotNullOrWhiteSpace(
+            marca,
+            nameof(marca),
+            ProductoConsts.MaxMarcaLength);
+
         Marca = marca.Trim();
     }
 
     private void SetCategoria(string categoria)
     {
-        Check.NotNullOrWhiteSpace(categoria, nameof(categoria), ProductoConsts.MaxCategoriaLength);
+        Check.NotNullOrWhiteSpace(
+            categoria,
+            nameof(categoria),
+            ProductoConsts.MaxCategoriaLength);
+
         Categoria = categoria.Trim();
     }
 }

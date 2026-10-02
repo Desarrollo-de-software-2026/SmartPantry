@@ -1,53 +1,40 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using SmartPantry.Productos;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace SmartPantry.Productos;
 
-[AllowAnonymous] // Acceso temporal para probar en Swagger sin token
-public class ProductoAppService : SmartPantryAppService, IProductoAppService
+public class ProductoAppService :
+    CrudAppService<
+        Producto,
+        ProductoDto,
+        Guid,
+        GetProductosInput,
+        CreateProductoDto,
+        UpdateProductoDto>,
+    IProductoAppService
 {
-    private readonly IRepository<Producto, Guid> _productoRepository;
-
-    public ProductoAppService(IRepository<Producto, Guid> productoRepository)
+    public ProductoAppService(
+        IRepository<Producto, Guid> repository)
+        : base(repository)
     {
-        _productoRepository = productoRepository;
     }
 
-    public async Task<ProductoDto> CreateAsync(CreateProductoDto input)
+    public override async Task<ProductoDto> UpdateAsync(
+        Guid id,
+        UpdateProductoDto input)
     {
-        var producto = new Producto(
-            GuidGenerator.Create(),
+        var producto = await Repository.GetAsync(id);
+
+        producto.Actualizar(
             input.Nombre,
             input.Marca,
             input.Categoria,
-            input.UrlImagen
-        );
+            input.UrlImagen);
 
-        await _productoRepository.InsertAsync(producto);
+        await Repository.UpdateAsync(producto, autoSave: true);
 
-        return new ProductoDto
-        {
-            Id = producto.Id,
-            Nombre = producto.Nombre,
-            Marca = producto.Marca,
-            Categoria = producto.Categoria,
-            UrlImagen = producto.UrlImagen
-        };
-    }
-
-    public async Task<ProductoDto> GetAsync(Guid id)
-    {
-        var producto = await _productoRepository.GetAsync(id);
-        return new ProductoDto
-        {
-            Id = producto.Id,
-            Nombre = producto.Nombre,
-            Marca = producto.Marca,
-            Categoria = producto.Categoria,
-            UrlImagen = producto.UrlImagen
-        };
+        return ObjectMapper.Map<Producto, ProductoDto>(producto);
     }
 }
