@@ -2,22 +2,24 @@
 using NSubstitute;
 using Shouldly;
 using Xunit;
+using Volo.Abp.Domain.Repositories;
 
 namespace SmartPantry.Productos;
 
-public class ProductoAppService_External_Tests : SmartPantryApplicationTestBase
+public class ProductoAppService_External_Tests
 {
     private readonly IExternalProductCatalogClient _externalProductCatalogClientMock;
+    private readonly IRepository<Producto, System.Guid> _productoRepositoryMock;
     private readonly ProductoAppService _productoAppService;
 
     public ProductoAppService_External_Tests()
     {
-        // Creamos el mock de la interfaz externa
+        // 1. Mocks de las dependencias con NSubstitute
         _externalProductCatalogClientMock = Substitute.For<IExternalProductCatalogClient>();
+        _productoRepositoryMock = Substitute.For<IRepository<Producto, System.Guid>>();
 
-        // Instanciamos el AppService inyectándole el mock y el repositorio por defecto de la base de pruebas
-        var repository = GetRequiredService<Volo.Abp.Domain.Repositories.IRepository<Producto, System.Guid>>();
-        _productoAppService = new ProductoAppService(repository, _externalProductCatalogClientMock);
+        // 2. Instanciamos el AppService de forma pura, 100% aislada de base de datos
+        _productoAppService = new ProductoAppService(_productoRepositoryMock, _externalProductCatalogClientMock);
     }
 
     [Fact]
