@@ -11,6 +11,7 @@
         <Project Path="src/SmartPantry.HttpApi/SmartPantry.HttpApi.csproj" />
     </Folder>
     <Folder Name="/test/">
+        <File Path="ProductoAppService_External_Tests.cs" />
         <Project Path="test/SmartPantry.Application.Tests/SmartPantry.Application.Tests.csproj" />
         <Project Path="test/SmartPantry.Domain.Tests/SmartPantry.Domain.Tests.csproj" />
         <Project Path="test/SmartPantry.EntityFrameworkCore.Tests/SmartPantry.EntityFrameworkCore.Tests.csproj" />
