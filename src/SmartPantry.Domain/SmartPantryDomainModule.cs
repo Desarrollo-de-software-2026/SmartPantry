@@ -1,4 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Volo.Abp;
+using Volo.Abp.BackgroundWorkers;
+using SmartPantry.Despensas;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SmartPantry.Localization;
 using SmartPantry.MultiTenancy;
@@ -47,5 +51,11 @@ public class SmartPantryDomainModule : AbpModule
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
+    }
+
+    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        await base.OnApplicationInitializationAsync(context);
+        await context.AddBackgroundWorkerAsync<VencimientoWorker>();
     }
 }
