@@ -145,6 +145,78 @@ namespace SmartPantry.Migrations
                     b.ToTable("AppBooks", (string)null);
                 });
 
+            modelBuilder.Entity("SmartPantry.Despensa.AdvertenciaVencimiento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("EstaActiva")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ItemDespensaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TipoAdvertencia")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemDespensaId", "TipoAdvertencia")
+                        .IsUnique();
+
+                    b.ToTable("AppAdvertenciasVencimiento", (string)null);
+                });
+
+            modelBuilder.Entity("SmartPantry.Despensa.ItemDespensa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DespensaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("EstaConsumido")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("IdProducto")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DespensaId");
+
+                    b.ToTable("AppItemsDespensa", (string)null);
+                });
+
+            modelBuilder.Entity("SmartPantry.Despensas.Despensa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppDespensas", (string)null);
+                });
+
             modelBuilder.Entity("SmartPantry.Productos.Producto", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2089,6 +2161,83 @@ namespace SmartPantry.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SmartPantry.Despensa.ItemDespensa", b =>
+                {
+                    b.HasOne("SmartPantry.Despensas.Despensa", null)
+                        .WithMany("Items")
+                        .HasForeignKey("DespensaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("SmartPantry.Despensa.Cantidad", "Cantidad", b1 =>
+                        {
+                            b1.Property<Guid>("ItemDespensaId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Monto")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("CantidadMonto");
+
+                            b1.Property<string>("Unidad")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("CantidadUnidad");
+
+                            b1.HasKey("ItemDespensaId");
+
+                            b1.ToTable("AppItemsDespensa");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemDespensaId");
+                        });
+
+                    b.OwnsOne("SmartPantry.Despensa.FechaVencimiento", "FechaVencimiento", b1 =>
+                        {
+                            b1.Property<Guid>("ItemDespensaId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("FechaVenc")
+                                .HasColumnType("datetime2")
+                                .HasColumnName("FechaVencimiento");
+
+                            b1.HasKey("ItemDespensaId");
+
+                            b1.ToTable("AppItemsDespensa");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemDespensaId");
+                        });
+
+                    b.OwnsOne("SmartPantry.Despensa.Nota", "Nota", b1 =>
+                        {
+                            b1.Property<Guid>("ItemDespensaId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Texto")
+                                .IsRequired()
+                                .HasMaxLength(250)
+                                .HasColumnType("nvarchar(250)")
+                                .HasColumnName("NotaTexto");
+
+                            b1.HasKey("ItemDespensaId");
+
+                            b1.ToTable("AppItemsDespensa");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemDespensaId");
+                        });
+
+                    b.Navigation("Cantidad")
+                        .IsRequired();
+
+                    b.Navigation("FechaVencimiento")
+                        .IsRequired();
+
+                    b.Navigation("Nota")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -2285,6 +2434,11 @@ namespace SmartPantry.Migrations
                     b.HasOne("Volo.Abp.OpenIddict.Authorizations.OpenIddictAuthorization", null)
                         .WithMany()
                         .HasForeignKey("AuthorizationId");
+                });
+
+            modelBuilder.Entity("SmartPantry.Despensas.Despensa", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
