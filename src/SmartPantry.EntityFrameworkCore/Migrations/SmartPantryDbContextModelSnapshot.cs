@@ -161,11 +161,11 @@ namespace SmartPantry.Migrations
 
                     b.Property<string>("TipoAdvertencia")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemDespensaId", "TipoAdvertencia")
+                    b.HasIndex("ItemDespensaId")
                         .IsUnique();
 
                     b.ToTable("AppAdvertenciasVencimiento", (string)null);
@@ -2231,8 +2231,7 @@ namespace SmartPantry.Migrations
                     b.Navigation("Cantidad")
                         .IsRequired();
 
-                    b.Navigation("FechaVencimiento")
-                        .IsRequired();
+                    b.Navigation("FechaVencimiento");
 
                     b.Navigation("Nota")
                         .IsRequired();

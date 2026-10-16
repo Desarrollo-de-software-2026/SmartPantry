@@ -113,7 +113,7 @@ public class SmartPantryDbContext :
             b.ConfigureByConvention();
 
             // Índice único compuesto para asegurar idempotencia (TP08)
-            b.HasIndex(a => new { a.ItemDespensaId, a.TipoAdvertencia }).IsUnique();
+            b.HasIndex(a => a.ItemDespensaId).IsUnique();
         });
 
         /* Include modules to your migration db context */

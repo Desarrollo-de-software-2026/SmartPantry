@@ -1,4 +1,4 @@
-﻿using SmartPantry.Despensa;
+using SmartPantry.Despensa;
 using System;
 using Volo.Abp.Domain.Entities;
 
@@ -11,7 +11,7 @@ public class ItemDespensa : Entity<Guid>
 
     // Value Objects mapeados
     public Cantidad Cantidad { get; private set; }
-    public FechaVencimiento FechaVencimiento { get; private set; }
+    public FechaVencimiento? FechaVencimiento { get; private set; }
     public Nota Nota { get; private set; }
 
     private ItemDespensa() { } // Para EF Core
@@ -20,7 +20,7 @@ public class ItemDespensa : Entity<Guid>
         Guid id,
         Guid idProducto,
         Cantidad cantidad,
-        FechaVencimiento fechaVencimiento = null,
+        FechaVencimiento? fechaVencimiento = null,
         Nota nota = null) : base(id)
     {
         IdProducto = idProducto;
@@ -28,6 +28,11 @@ public class ItemDespensa : Entity<Guid>
         FechaVencimiento = fechaVencimiento;
         Nota = nota;
         EstaConsumido = false;
+    }
+
+    public void ActualizarFechaVencimiento(FechaVencimiento? fechaVencimiento)
+    {
+        FechaVencimiento = fechaVencimiento;
     }
 
     public void MarcarComoConsumido()
