@@ -19,45 +19,69 @@ public class AdvertenciaVencimientoManager : DomainService
         _advertenciaRepository = advertenciaRepository;
     }
 
-    public async Task ProcesarVencimientosAsync()
+    public Task ProcesarVencimientosAsync()
     {
-        var hoy = DateTime.Today;
+        // La regla de negocio usa la fecha local del servidor.
+        return ProcesarVencimientosAsync(DateTime.Today);
+    }
+
+    public async Task ProcesarVencimientosAsync(DateTime hoy)
+    {
+        hoy = hoy.Date;
         const int diasUmbral = 7;
         var items = await _itemRepository.GetListAsync();
 
         foreach (var item in items)
         {
+            var advertencia = await _advertenciaRepository.FirstOrDefaultAsync(
+                a => a.ItemDespensaId == item.Id);
+
+            TipoAdvertencia? tipoEsperado = null;
             var fechaVencimiento = item.FechaVencimiento?.FechaVenc;
-            if (!fechaVencimiento.HasValue)
+
+            if (!item.EstaConsumido && fechaVencimiento.HasValue)
             {
+                var fecha = fechaVencimiento.Value.Date;
+                if (fecha < hoy)
+                {
+                    tipoEsperado = TipoAdvertencia.Vencido;
+                }
+                else if (fecha <= hoy.AddDays(diasUmbral))
+                {
+                    tipoEsperado = TipoAdvertencia.ProximoAVencer;
+                }
+            }
+
+            if (!tipoEsperado.HasValue)
+            {
+                if (advertencia?.EstaActiva == true)
+                {
+                    advertencia.Desactivar();
+                    await _advertenciaRepository.UpdateAsync(advertencia);
+                }
+
                 continue;
             }
 
-            TipoAdvertencia? tipo = null;
-            var fecha = fechaVencimiento.Value.Date;
-            if (fecha < hoy)
+            var tipoTexto = tipoEsperado.Value.ToString();
+            if (advertencia == null)
             {
-                tipo = TipoAdvertencia.Vencido;
-            }
-            else if (fecha <= hoy.AddDays(diasUmbral))
-            {
-                tipo = TipoAdvertencia.ProximoAVencer;
-            }
-
-            if (!tipo.HasValue)
-            {
+                await _advertenciaRepository.InsertAsync(
+                    new AdvertenciaVencimiento(GuidGenerator.Create(), item.Id, tipoTexto));
                 continue;
             }
 
-            var tipoTexto = tipo.Value.ToString();
-            var yaExiste = await _advertenciaRepository.AnyAsync(a =>
-                a.ItemDespensaId == item.Id && a.TipoAdvertencia == tipoTexto);
-
-            if (!yaExiste)
+            if (advertencia.TipoAdvertencia != tipoTexto)
             {
-                await _advertenciaRepository.InsertAsync(new AdvertenciaVencimiento(
-                    GuidGenerator.Create(), item.Id, tipoTexto));
+                advertencia.ActualizarTipo(tipoTexto);
             }
+
+            if (!advertencia.EstaActiva)
+            {
+                advertencia.Activar();
+            }
+
+            await _advertenciaRepository.UpdateAsync(advertencia);
         }
     }
 }

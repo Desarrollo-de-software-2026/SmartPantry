@@ -20,6 +20,11 @@ public class AdvertenciaVencimiento : Entity<Guid>
         FechaCreacion = DateTime.UtcNow;
     }
 
+    public void ActualizarTipo(string tipoAdvertencia)
+    {
+        TipoAdvertencia = tipoAdvertencia;
+    }
+
     public void Desactivar() => EstaActiva = false;
     public void Activar() => EstaActiva = true;
 }

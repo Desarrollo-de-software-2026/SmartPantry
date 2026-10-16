@@ -52,10 +52,4 @@ public class SmartPantryDomainModule : AbpModule
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
     }
-
-    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
-    {
-        await base.OnApplicationInitializationAsync(context);
-        await context.AddBackgroundWorkerAsync<VencimientoWorker>();
-    }
 }
