@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Threading;
@@ -34,7 +35,8 @@ public class VencimientoWorker : AsyncPeriodicBackgroundWorkerBase
         }
         catch (System.Exception exception)
         {
-            Microsoft.Extensions.Logging.LoggerExtensions.LogError(Logger, exception, "Error al procesar las advertencias de vencimiento. La próxima ejecución periódica continuará normalmente.");
+            Logger.LogError(exception,
+                "Error al procesar las advertencias de vencimiento. La próxima ejecución periódica continuará normalmente.");
         }
     }
 }

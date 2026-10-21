@@ -114,6 +114,18 @@ public class AdvertenciaVencimientoManager_Tests : SmartPantryDomainTestBase<Sma
     }
 
     [Fact]
+    public async Task Ejecuciones_Cercanas_No_Deben_Duplicar_Advertencias()
+    {
+        var itemId = await GuardarItemAsync(Hoy.AddDays(3));
+
+        await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => ProcesarAsync()));
+
+        var advertencias = await InUnitOfWorkAsync(services =>
+            services.GetRequiredService<IRepository<AdvertenciaVencimiento, Guid>>()
+                .GetListAsync(a => a.ItemDespensaId == itemId));
+        advertencias.Count.ShouldBe(1);
+    }
+    [Fact]
     public async Task Debe_Actualizar_Fecha_De_Advertencia_Aunque_Mantenga_La_Misma_Categoria()
     {
         var fechaInicial = Hoy.AddDays(3);
