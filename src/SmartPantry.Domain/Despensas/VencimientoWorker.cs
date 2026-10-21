@@ -20,14 +20,21 @@ public class VencimientoWorker : AsyncPeriodicBackgroundWorkerBase
     protected override async Task DoWorkAsync(
     PeriodicBackgroundWorkerContext workerContext)
     {
-        var services = workerContext.ServiceProvider;
+        try
+        {
+            var services = workerContext.ServiceProvider;
 
-        var uowManager = services.GetRequiredService<IUnitOfWorkManager>();
-        using var uow = uowManager.Begin();
+            var uowManager = services.GetRequiredService<IUnitOfWorkManager>();
+            using var uow = uowManager.Begin();
 
-        var manager = services.GetRequiredService<AdvertenciaVencimientoManager>();
-        await manager.ProcesarVencimientosAsync();
+            var manager = services.GetRequiredService<AdvertenciaVencimientoManager>();
+            await manager.ProcesarVencimientosAsync();
 
-        await uow.CompleteAsync();
+            await uow.CompleteAsync();
+        }
+        catch (System.Exception exception)
+        {
+            Microsoft.Extensions.Logging.LoggerExtensions.LogError(Logger, exception, "Error al procesar las advertencias de vencimiento. La próxima ejecución periódica continuará normalmente.");
+        }
     }
 }

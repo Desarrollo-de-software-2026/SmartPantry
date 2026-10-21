@@ -113,6 +113,29 @@ public class AdvertenciaVencimientoManager_Tests : SmartPantryDomainTestBase<Sma
         advertencias.Count.ShouldBe(1);
     }
 
+    [Fact]
+    public async Task Debe_Actualizar_Fecha_De_Advertencia_Aunque_Mantenga_La_Misma_Categoria()
+    {
+        var fechaInicial = Hoy.AddDays(3);
+        var nuevaFecha = Hoy.AddDays(5);
+        var itemId = await GuardarItemAsync(fechaInicial);
+
+        await ProcesarAsync();
+        var advertenciaInicial = await ObtenerAdvertenciaAsync(itemId);
+        advertenciaInicial.ShouldNotBeNull();
+        advertenciaInicial!.TipoAdvertencia.ShouldBe(TipoAdvertencia.ProximoAVencer.ToString());
+        advertenciaInicial.FechaVencimientoRegistrada.ShouldBe(fechaInicial.Date);
+
+        await CambiarFechaAsync(itemId, nuevaFecha);
+        await ProcesarAsync();
+
+        var actualizada = await ObtenerAdvertenciaAsync(itemId);
+        actualizada.ShouldNotBeNull();
+        actualizada!.TipoAdvertencia.ShouldBe(TipoAdvertencia.ProximoAVencer.ToString());
+        actualizada.FechaVencimientoRegistrada.ShouldBe(nuevaFecha.Date);
+        actualizada.Id.ShouldBe(advertenciaInicial.Id);
+    }
+
     private async Task<Guid> GuardarItemAsync(DateTime? fecha, bool consumido = false)
     {
         var itemId = Guid.NewGuid();
