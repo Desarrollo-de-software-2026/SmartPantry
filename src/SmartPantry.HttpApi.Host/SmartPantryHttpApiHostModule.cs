@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,11 +17,13 @@ using Microsoft.OpenApi;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 using SmartPantry.EntityFrameworkCore;
+using SmartPantry.Despensas;
 using SmartPantry.HealthChecks;
 using SmartPantry.HttpApi.Host.Clients;
 using SmartPantry.MultiTenancy;
 using SmartPantry.Productos;
 using Volo.Abp;
+using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.MultiTenancy;
@@ -282,6 +285,12 @@ public class SmartPantryHttpApiHostModule : AbpModule
         context.Services.AddSmartPantryHealthChecks();
     }
 
+
+    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        await base.OnApplicationInitializationAsync(context);
+        await context.AddBackgroundWorkerAsync<VencimientoWorker>();
+    }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {

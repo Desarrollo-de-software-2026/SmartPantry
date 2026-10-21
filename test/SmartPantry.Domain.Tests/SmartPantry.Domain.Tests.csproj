@@ -10,11 +10,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SmartPantry.Domain\SmartPantry.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SmartPantry.EntityFrameworkCore\SmartPantry.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\SmartPantry.TestBase\SmartPantry.TestBase.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="10.6.0" />
   </ItemGroup>
 
 </Project>
