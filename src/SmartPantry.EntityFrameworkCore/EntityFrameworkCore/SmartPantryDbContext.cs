@@ -111,6 +111,7 @@ public class SmartPantryDbContext :
         {
             b.ToTable(SmartPantryConsts.DbTablePrefix + "AdvertenciasVencimiento", SmartPantryConsts.DbSchema);
             b.ConfigureByConvention();
+            b.Property(a => a.FechaVencimientoRegistrada).HasColumnType("datetime2");
 
             // Índice único compuesto para asegurar idempotencia (TP08)
             b.HasIndex(a => a.ItemDespensaId).IsUnique();

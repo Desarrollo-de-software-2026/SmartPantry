@@ -156,6 +156,9 @@ namespace SmartPantry.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("FechaVencimientoRegistrada")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ItemDespensaId")
                         .HasColumnType("uniqueidentifier");
 

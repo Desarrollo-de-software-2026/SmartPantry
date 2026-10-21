@@ -67,13 +67,15 @@ public class AdvertenciaVencimientoManager : DomainService
             if (advertencia == null)
             {
                 await _advertenciaRepository.InsertAsync(
-                    new AdvertenciaVencimiento(GuidGenerator.Create(), item.Id, tipoTexto));
+                    new AdvertenciaVencimiento(GuidGenerator.Create(), item.Id, tipoTexto, fechaVencimiento!.Value));
                 continue;
             }
 
-            if (advertencia.TipoAdvertencia != tipoTexto)
+            var fechaRegistrada = fechaVencimiento!.Value.Date;
+            if (advertencia.TipoAdvertencia != tipoTexto ||
+                advertencia.FechaVencimientoRegistrada?.Date != fechaRegistrada)
             {
-                advertencia.ActualizarTipo(tipoTexto);
+                advertencia.Actualizar(tipoTexto, fechaRegistrada);
             }
 
             if (!advertencia.EstaActiva)
