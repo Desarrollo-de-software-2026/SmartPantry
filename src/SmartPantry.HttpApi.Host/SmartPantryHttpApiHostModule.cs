@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -253,6 +254,16 @@ public class SmartPantryHttpApiHostModule : AbpModule
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "SmartPantry API", Version = "v1" });
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    Description = "Pegue access_token sin el prefijo Bearer."
+                });
+                options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+                });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
             });
@@ -308,10 +319,34 @@ public class SmartPantryHttpApiHostModule : AbpModule
 
         if (!env.IsDevelopment())
         {
-            app.UseErrorPage();
+            app.UseWhen(
+                httpContext => !httpContext.Request.Path.StartsWithSegments("/api"),
+                branch => branch.UseErrorPage());
         }
 
         app.UseRouting();
+        app.Use(async (httpContext, next) =>
+        {
+            await next();
+
+            if (!httpContext.Request.Path.StartsWithSegments("/api") ||
+                httpContext.Response.StatusCode != StatusCodes.Status302Found)
+            {
+                return;
+            }
+
+            var location = httpContext.Response.Headers.Location.ToString();
+            if (location.Contains("/Account/Login", StringComparison.OrdinalIgnoreCase))
+            {
+                httpContext.Response.Headers.Remove("Location");
+                httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            }
+            else if (location.Contains("/Account/AccessDenied", StringComparison.OrdinalIgnoreCase))
+            {
+                httpContext.Response.Headers.Remove("Location");
+                httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+            }
+        });
         app.MapAbpStaticAssets();
         app.UseAbpStudioLink();
         app.UseAbpSecurityHeaders();
