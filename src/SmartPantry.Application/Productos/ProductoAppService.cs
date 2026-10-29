@@ -32,6 +32,7 @@ public class ProductoAppService : CrudAppService<
     }
 
     // Método del TP07: Consulta externa por código de barras
+    [Authorize]
     public async Task<ExternalProductDto?> GetExternalAsync(GetExternalProductInput input)
     {
         if (_externalProductCatalogClient == null)
