@@ -1,10 +1,12 @@
-﻿using System;
+using Microsoft.AspNetCore.Authorization;
+using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace SmartPantry.Productos;
 
+[Authorize]
 public class ProductoAppService : CrudAppService<
     Producto,
     ProductoDto,
@@ -30,6 +32,7 @@ public class ProductoAppService : CrudAppService<
     }
 
     // Método del TP07: Consulta externa por código de barras
+    [Authorize]
     public async Task<ExternalProductDto?> GetExternalAsync(GetExternalProductInput input)
     {
         if (_externalProductCatalogClient == null)
