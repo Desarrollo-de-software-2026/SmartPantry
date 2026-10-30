@@ -2231,8 +2231,7 @@ namespace SmartPantry.Migrations
                                 .HasForeignKey("ItemDespensaId");
                         });
 
-                    b.Navigation("Cantidad")
-                        .IsRequired();
+                    b.Navigation("Cantidad");
 
                     b.Navigation("FechaVencimiento");
 

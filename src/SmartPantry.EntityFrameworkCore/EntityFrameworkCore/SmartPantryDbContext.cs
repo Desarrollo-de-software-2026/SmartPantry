@@ -80,7 +80,7 @@ public class SmartPantryDbContext :
             b.ConfigureByConvention();
 
             // Relación 1 a N con ItemDespensa
-            b.HasMany(d => d.Items).WithOne().HasForeignKey("DespensaId").IsRequired();
+            b.HasMany(d => d.Items).WithOne().HasForeignKey(i => i.DespensaId).IsRequired();
         });
 
         builder.Entity<ItemDespensa>(b =>
@@ -94,16 +94,19 @@ public class SmartPantryDbContext :
                 c.Property(p => p.Monto).HasColumnName("CantidadMonto");
                 c.Property(p => p.Unidad).HasColumnName("CantidadUnidad").HasMaxLength(20);
             });
+            b.Navigation(i => i.Cantidad).IsRequired(false);
 
             b.OwnsOne(i => i.FechaVencimiento, f =>
             {
                 f.Property(p => p.FechaVenc).HasColumnName("FechaVencimiento");
             });
+            b.Navigation(i => i.FechaVencimiento).IsRequired(false);
 
             b.OwnsOne(i => i.Nota, n =>
             {
-                n.Property(p => p.Texto).HasColumnName("NotaTexto").HasMaxLength(250);
+                n.Property(p => p.Texto).HasColumnName("NotaTexto").HasMaxLength(250).IsRequired();
             });
+            b.Navigation(i => i.Nota).IsRequired();
         });
 
         // Mapeo de Advertencias de Vencimiento
