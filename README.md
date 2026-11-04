@@ -66,6 +66,10 @@ Las fechas se presentan con `DatePipe` y la configuración regional activa de An
 
 Los ítems marcados como consumidos se conservan en la despensa como historial y siguen visibles con un estado diferenciado. También pueden eliminarse explícitamente desde la interfaz, previa confirmación.
 
+## Localización y errores de la interfaz (TP 10, bloque 7)
+
+Los textos de la pantalla y del menú «Mi despensa» usan claves del recurso `SmartPantry` con traducciones en español e inglés. El componente presenta errores de carga, edición y acciones con mensajes localizados y ofrece reintentar la carga. En esas solicitudes se usa `skipHandleError` para que el componente muestre el estado o mensaje contextual sin duplicarlo con el aviso genérico de ABP. Los detalles técnicos y mensajes internos del servidor no se exponen en la interfaz.
+
 ## Verificación
 
 Se verificó correctamente:

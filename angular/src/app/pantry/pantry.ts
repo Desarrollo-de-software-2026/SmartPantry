@@ -78,7 +78,7 @@ export class Pantry {
     { skipCount: number; maxResultCount: number; sorting: string }
   >({
     params: () => this.listQuery(),
-    stream: ({ params }) => this.itemDespensaService.getList(params),
+    stream: ({ params }) => this.itemDespensaService.getList(params, { skipHandleError: true }),
     defaultValue: { items: [], totalCount: 0 },
     injector: this.injector,
   });
@@ -118,7 +118,7 @@ export class Pantry {
       cantidad: value.cantidad,
       unidad: value.cantidad === null ? null : value.unidad?.trim() || null,
       fechaVencimiento: value.fechaVencimiento || null,
-    }).subscribe({
+    }, { skipHandleError: true }).subscribe({
       next: () => {
         this.saving.set(false);
         this.editOpen.set(false);
@@ -135,7 +135,7 @@ export class Pantry {
     if (!item.id || item.estaConsumido || this.pendingItemId()) return;
     this.actionError.set(null);
     this.pendingItemId.set(item.id);
-    this.itemDespensaService.markAsConsumed(item.id).subscribe({
+    this.itemDespensaService.markAsConsumed(item.id, { skipHandleError: true }).subscribe({
       next: () => {
         this.pendingItemId.set(null);
         this.list.get();
@@ -153,7 +153,7 @@ export class Pantry {
       if (status !== Confirmation.Status.confirm) return;
       this.actionError.set(null);
       this.pendingItemId.set(item.id!);
-      this.itemDespensaService.delete(item.id!).subscribe({
+      this.itemDespensaService.delete(item.id!, { skipHandleError: true }).subscribe({
         next: () => {
           this.pendingItemId.set(null);
           this.list.get();
@@ -168,7 +168,7 @@ export class Pantry {
 
   readonly asCalendarDate = asCalendarDate;
 
-  private serverError(error: any): string {
-    return error?.error?.error?.message || error?.error?.message || error?.message || '::Pantry:ActionError';
+  private serverError(_error: unknown): string {
+    return '::Pantry:ActionError';
   }
 }
