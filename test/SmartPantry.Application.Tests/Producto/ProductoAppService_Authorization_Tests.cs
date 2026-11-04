@@ -38,8 +38,13 @@ public class ProductoAppService_Authorization_Tests
     [Fact]
     public void Identity_user_list_requires_the_identity_users_permission()
     {
-        var identityServiceType = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
+        // The application service lives in the Identity application assembly; the input
+        // DTO lives in the contracts assembly, so resolve the service from its own module.
+        var identityApplicationAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .SingleOrDefault(assembly => assembly.GetName().Name == "Volo.Abp.Identity.Application");
+        identityApplicationAssembly.ShouldNotBeNull();
+
+        var identityServiceType = identityApplicationAssembly!.GetTypes()
             .SingleOrDefault(type => type.Name == "IdentityUserAppService");
         identityServiceType.ShouldNotBeNull();
 

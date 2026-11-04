@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.pantry-page {
+  max-width: 1200px;
+  min-width: 0;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+.pantry-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pantry-eyebrow {
+  color: var(--sp-rose-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pantry-state {
+  display: flex;
+  min-height: 230px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 2rem;
+  border: 1px solid var(--sp-rose-border);
+  border-radius: 1rem;
+  background: #fff;
+  text-align: center;
+}
+
+.pantry-state-error > div,
+.pantry-state-empty {
+  flex-direction: column;
+}
+
+.empty-icon {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  margin-bottom: 0.4rem;
+  border-radius: 50%;
+  background: var(--sp-rose-soft);
+  color: var(--sp-rose-primary);
+  font-size: 1.4rem;
+}
+
+.pantry-results {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--sp-rose-border);
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.product-name {
+  font-weight: 650;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: #edf8f0;
+  color: #28613b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #42a567;
+}
+
+.status-consumed {
+  background: #f1f1f1;
+  color: #555;
+
+  .status-dot { background: #888; }
+}
+
+@media (max-width: 575.98px) {
+  .pantry-page { padding-inline: 0.75rem; }
+
+  .pantry-results {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  .pantry-table { min-width: 620px; }
+}
