@@ -64,6 +64,8 @@ La pantalla Angular consume `ItemDespensaService.getList` y usa `ListService` po
 
 Las fechas se presentan con `DatePipe` y la configuración regional activa de Angular. El vencimiento es una fecha calendario: al recibir el formato ISO se construye como fecha local sin desplazar el día por zona horaria. El worker TP08 también aplica el criterio de fecha local del servidor (`DateTime.Today`), por lo que el criterio es local, no UTC.
 
+Los ítems marcados como consumidos se conservan en la despensa como historial y siguen visibles con un estado diferenciado. También pueden eliminarse explícitamente desde la interfaz, previa confirmación.
+
 ## Verificación
 
 Se verificó correctamente:
