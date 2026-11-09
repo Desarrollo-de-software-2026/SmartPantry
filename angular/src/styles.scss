@@ -1,5 +1,69 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --sp-rose-primary: #a94370;
+  --sp-rose-hover: #873255;
+  --sp-rose-soft: #fff1f6;
+  --sp-rose-border: #f0c6d7;
+  --sp-rose-text: #4b2d3b;
+  --bs-primary: var(--sp-rose-primary);
+  --bs-primary-rgb: 169, 67, 112;
+  --bs-link-color: var(--sp-rose-primary);
+  --bs-link-hover-color: var(--sp-rose-hover);
+}
+
+body {
+  background-color: #fff9fb;
+  color: var(--sp-rose-text);
+}
+
+.card,
+.modal-content,
+.dropdown-menu {
+  border-color: var(--sp-rose-border);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--sp-rose-primary);
+  --bs-btn-border-color: var(--sp-rose-primary);
+  --bs-btn-hover-bg: var(--sp-rose-hover);
+  --bs-btn-hover-border-color: var(--sp-rose-hover);
+  --bs-btn-active-bg: var(--sp-rose-hover);
+  --bs-btn-active-border-color: var(--sp-rose-hover);
+  --bs-btn-disabled-bg: var(--sp-rose-primary);
+  --bs-btn-disabled-border-color: var(--sp-rose-primary);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--sp-rose-primary);
+  --bs-btn-border-color: var(--sp-rose-border);
+  --bs-btn-hover-bg: var(--sp-rose-primary);
+  --bs-btn-hover-border-color: var(--sp-rose-primary);
+  --bs-btn-active-bg: var(--sp-rose-hover);
+  --bs-btn-active-border-color: var(--sp-rose-hover);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: #d78aa9;
+  box-shadow: 0 0 0 0.2rem rgb(169 67 112 / 20%);
+}
+
+.form-check-input:checked {
+  background-color: var(--sp-rose-primary);
+  border-color: var(--sp-rose-primary);
+}
+
+.page-item.active .page-link {
+  background-color: var(--sp-rose-primary);
+  border-color: var(--sp-rose-primary);
+}
+
+::selection {
+  background: #f4cddd;
+  color: var(--sp-rose-text);
+}
 
 :root {
   --lpx-theme-light-bg: url('assets/images/login/login-bg-img-light.svg');
