@@ -32,7 +32,10 @@
     @if (actionError(); as errorMessage) {
       <div class="alert alert-danger" role="alert">{{ errorMessage | abpLocalization }}</div>
     }
-    <section class="pantry-results" [attr.aria-label]="'::Pantry:Title' | abpLocalization">
+    <section
+      class="pantry-results pantry-desktop d-none d-md-block"
+      [attr.aria-label]="'::Pantry:Title' | abpLocalization"
+    >
       <ngx-datatable
         class="bootstrap pantry-table"
         [rows]="itemsResource.value().items"
@@ -99,6 +102,75 @@
           </ng-template>
         </ngx-datatable-column>
       </ngx-datatable>
+    </section>
+
+    <section
+      class="pantry-mobile d-md-none"
+      [attr.aria-label]="'::Pantry:Title' | abpLocalization"
+    >
+      @for (row of itemsResource.value().items; track row.id) {
+        <article class="pantry-card">
+          <header class="pantry-card-header">
+            <div class="pantry-card-product">
+              <p class="pantry-card-label">{{ '::Pantry:Product' | abpLocalization }}</p>
+              <h2 class="h5 mb-0 product-name">
+                {{ row.nombreProducto || ('::Pantry:Unavailable' | abpLocalization) }}
+              </h2>
+            </div>
+            <span class="status-badge" [class.status-consumed]="row.estaConsumido">
+              <span class="status-dot" aria-hidden="true"></span>
+              {{ (row.estaConsumido ? '::Pantry:Consumed' : '::Pantry:Pending') | abpLocalization }}
+            </span>
+          </header>
+
+          <dl class="pantry-card-details">
+            <div>
+              <dt>{{ '::Pantry:Expiry' | abpLocalization }}</dt>
+              <dd>
+                @if (asCalendarDate(row.fechaVencimiento); as expiryDate) {
+                  <time [attr.datetime]="row.fechaVencimiento">{{ expiryDate | date }}</time>
+                } @else {
+                  <span class="text-secondary">{{ '::Pantry:Unavailable' | abpLocalization }}</span>
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>{{ '::Pantry:Quantity' | abpLocalization }}</dt>
+              <dd>
+                @if (row.cantidad !== null && row.cantidad !== undefined && row.unidad) {
+                  {{ row.cantidad }} {{ row.unidad }}
+                } @else {
+                  <span class="text-secondary">{{ '::Pantry:Unavailable' | abpLocalization }}</span>
+                }
+              </dd>
+            </div>
+          </dl>
+
+          <div class="pantry-card-actions">
+            <button class="btn btn-sm btn-outline-primary" type="button" (click)="openEdit(row)">
+              {{ '::Pantry:Edit' | abpLocalization }}
+            </button>
+            @if (!row.estaConsumido) {
+              <button
+                class="btn btn-sm btn-outline-success"
+                type="button"
+                [disabled]="pendingItemId() === row.id"
+                (click)="markConsumed(row)"
+              >
+                {{ '::Pantry:MarkConsumed' | abpLocalization }}
+              </button>
+            }
+            <button
+              class="btn btn-sm btn-outline-danger"
+              type="button"
+              [disabled]="pendingItemId() === row.id"
+              (click)="confirmDelete(row)"
+            >
+              {{ '::Pantry:Delete' | abpLocalization }}
+            </button>
+          </div>
+        </article>
+      }
     </section>
   }
 

@@ -17,6 +17,19 @@ body {
   color: var(--sp-rose-text);
 }
 
+@media (max-width: 767px) {
+  .lpx-footbar-container {
+    position: static;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .lpx-footbar-container .lpx-footbar {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+
 .card,
 .modal-content,
 .dropdown-menu {
