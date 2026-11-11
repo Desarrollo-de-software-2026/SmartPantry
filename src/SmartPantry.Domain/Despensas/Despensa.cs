@@ -26,6 +26,8 @@ public class Despensa : AggregateRoot<Guid>
 
     public void AgregarItem(ItemDespensa item)
     {
+        ArgumentNullException.ThrowIfNull(item);
+        item.AsignarADespensa(Id);
         _items.Add(item);
     }
 }

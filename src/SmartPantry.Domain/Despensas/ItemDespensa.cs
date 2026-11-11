@@ -6,11 +6,12 @@ namespace SmartPantry.Despensa;
 
 public class ItemDespensa : Entity<Guid>
 {
+    public Guid DespensaId { get; private set; }
     public Guid IdProducto { get; private set; }
     public bool EstaConsumido { get; private set; }
 
-    // Value Objects mapeados
-    public Cantidad Cantidad { get; private set; }
+    // Cantidad/unidad y vencimiento son opcionales según RF-10.
+    public Cantidad? Cantidad { get; private set; }
     public FechaVencimiento? FechaVencimiento { get; private set; }
     public Nota Nota { get; private set; }
 
@@ -19,7 +20,7 @@ public class ItemDespensa : Entity<Guid>
     public ItemDespensa(
         Guid id,
         Guid idProducto,
-        Cantidad cantidad,
+        Cantidad? cantidad = null,
         FechaVencimiento? fechaVencimiento = null,
         Nota nota = null) : base(id)
     {
@@ -28,6 +29,21 @@ public class ItemDespensa : Entity<Guid>
         FechaVencimiento = fechaVencimiento;
         Nota = nota;
         EstaConsumido = false;
+    }
+
+    internal void AsignarADespensa(Guid despensaId)
+    {
+        if (DespensaId != Guid.Empty && DespensaId != despensaId)
+        {
+            throw new InvalidOperationException("El ítem ya pertenece a otra despensa.");
+        }
+
+        DespensaId = despensaId;
+    }
+
+    public void ActualizarCantidad(Cantidad? cantidad)
+    {
+        Cantidad = cantidad;
     }
 
     public void ActualizarFechaVencimiento(FechaVencimiento? fechaVencimiento)

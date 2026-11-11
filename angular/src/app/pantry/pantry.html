@@ -1,0 +1,238 @@
+<main class="pantry-page container-fluid py-3">
+  <header class="pantry-heading mb-4">
+    <div>
+      <p class="pantry-eyebrow mb-1">{{ '::Pantry:Eyebrow' | abpLocalization }}</p>
+      <h1 class="h2 mb-1">{{ '::Pantry:Title' | abpLocalization }}</h1>
+      <p class="text-secondary mb-0">{{ '::Pantry:Subtitle' | abpLocalization }}</p>
+    </div>
+  </header>
+
+  @if (itemsResource.isLoading()) {
+    <section class="pantry-state" role="status" aria-live="polite">
+      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+      <span>{{ '::Pantry:Loading' | abpLocalization }}</span>
+    </section>
+  } @else if (itemsResource.error()) {
+    <section class="pantry-state pantry-state-error" role="alert">
+      <div>
+        <h2 class="h5">{{ '::Pantry:ErrorTitle' | abpLocalization }}</h2>
+        <p class="mb-3">{{ '::Pantry:Error' | abpLocalization }}</p>
+        <button class="btn btn-primary" type="button" (click)="retry()">
+          {{ '::Pantry:Retry' | abpLocalization }}
+        </button>
+      </div>
+    </section>
+  } @else if (itemsResource.value().totalCount === 0) {
+    <section class="pantry-state pantry-state-empty">
+      <div class="empty-icon" aria-hidden="true"><i class="fa fa-basket-shopping"></i></div>
+      <h2 class="h5">{{ '::Pantry:EmptyTitle' | abpLocalization }}</h2>
+      <p class="text-secondary mb-0">{{ '::Pantry:Empty' | abpLocalization }}</p>
+    </section>
+  } @else {
+    @if (actionError(); as errorMessage) {
+      <div class="alert alert-danger" role="alert">{{ errorMessage | abpLocalization }}</div>
+    }
+    <section
+      class="pantry-results pantry-desktop d-none d-md-block"
+      [attr.aria-label]="'::Pantry:Title' | abpLocalization"
+    >
+      <ngx-datatable
+        class="bootstrap pantry-table"
+        [rows]="itemsResource.value().items"
+        [count]="itemsResource.value().totalCount"
+        [list]="list"
+        default
+      >
+        <ngx-datatable-column [name]="'::Pantry:Product' | abpLocalization" prop="nombreProducto">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span class="product-name">{{ row.nombreProducto || ('::Pantry:Unavailable' | abpLocalization) }}</span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [name]="'::Pantry:Expiry' | abpLocalization" prop="fechaVencimiento">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (asCalendarDate(row.fechaVencimiento); as expiryDate) {
+              <time [attr.datetime]="row.fechaVencimiento">{{ expiryDate | date }}</time>
+            } @else {
+              <span class="text-secondary">{{ '::Pantry:Unavailable' | abpLocalization }}</span>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [name]="'::Pantry:Quantity' | abpLocalization">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.cantidad !== null && row.cantidad !== undefined && row.unidad) {
+              <span>{{ row.cantidad }} {{ row.unidad }}</span>
+            } @else {
+              <span class="text-secondary">{{ '::Pantry:Unavailable' | abpLocalization }}</span>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [name]="'::Pantry:Status' | abpLocalization" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span class="status-badge" [class.status-consumed]="row.estaConsumido">
+              <span class="status-dot" aria-hidden="true"></span>
+              {{ (row.estaConsumido ? '::Pantry:Consumed' : '::Pantry:Pending') | abpLocalization }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [name]="'::Pantry:Actions' | abpLocalization" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="row-actions">
+              <button class="btn btn-sm btn-outline-primary" type="button" (click)="openEdit(row)">
+                {{ '::Pantry:Edit' | abpLocalization }}
+              </button>
+              @if (!row.estaConsumido) {
+                <button
+                  class="btn btn-sm btn-outline-success"
+                  type="button"
+                  [disabled]="pendingItemId() === row.id"
+                  (click)="markConsumed(row)"
+                >
+                  {{ '::Pantry:MarkConsumed' | abpLocalization }}
+                </button>
+              }
+              <button
+                class="btn btn-sm btn-outline-danger"
+                type="button"
+                [disabled]="pendingItemId() === row.id"
+                (click)="confirmDelete(row)"
+              >
+                {{ '::Pantry:Delete' | abpLocalization }}
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </section>
+
+    <section
+      class="pantry-mobile d-md-none"
+      [attr.aria-label]="'::Pantry:Title' | abpLocalization"
+    >
+      @for (row of itemsResource.value().items; track row.id) {
+        <article class="pantry-card">
+          <header class="pantry-card-header">
+            <div class="pantry-card-product">
+              <p class="pantry-card-label">{{ '::Pantry:Product' | abpLocalization }}</p>
+              <h2 class="h5 mb-0 product-name">
+                {{ row.nombreProducto || ('::Pantry:Unavailable' | abpLocalization) }}
+              </h2>
+            </div>
+            <span class="status-badge" [class.status-consumed]="row.estaConsumido">
+              <span class="status-dot" aria-hidden="true"></span>
+              {{ (row.estaConsumido ? '::Pantry:Consumed' : '::Pantry:Pending') | abpLocalization }}
+            </span>
+          </header>
+
+          <dl class="pantry-card-details">
+            <div>
+              <dt>{{ '::Pantry:Expiry' | abpLocalization }}</dt>
+              <dd>
+                @if (asCalendarDate(row.fechaVencimiento); as expiryDate) {
+                  <time [attr.datetime]="row.fechaVencimiento">{{ expiryDate | date }}</time>
+                } @else {
+                  <span class="text-secondary">{{ '::Pantry:Unavailable' | abpLocalization }}</span>
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>{{ '::Pantry:Quantity' | abpLocalization }}</dt>
+              <dd>
+                @if (row.cantidad !== null && row.cantidad !== undefined && row.unidad) {
+                  {{ row.cantidad }} {{ row.unidad }}
+                } @else {
+                  <span class="text-secondary">{{ '::Pantry:Unavailable' | abpLocalization }}</span>
+                }
+              </dd>
+            </div>
+          </dl>
+
+          <div class="pantry-card-actions">
+            <button class="btn btn-sm btn-outline-primary" type="button" (click)="openEdit(row)">
+              {{ '::Pantry:Edit' | abpLocalization }}
+            </button>
+            @if (!row.estaConsumido) {
+              <button
+                class="btn btn-sm btn-outline-success"
+                type="button"
+                [disabled]="pendingItemId() === row.id"
+                (click)="markConsumed(row)"
+              >
+                {{ '::Pantry:MarkConsumed' | abpLocalization }}
+              </button>
+            }
+            <button
+              class="btn btn-sm btn-outline-danger"
+              type="button"
+              [disabled]="pendingItemId() === row.id"
+              (click)="confirmDelete(row)"
+            >
+              {{ '::Pantry:Delete' | abpLocalization }}
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  }
+
+  @if (editOpen()) {
+    <div class="edit-backdrop" role="presentation">
+      <section
+        class="edit-panel"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="'pantry-edit-title'"
+      >
+        <header class="edit-panel-header">
+          <div>
+            <p class="pantry-eyebrow mb-1">{{ '::Pantry:EditEyebrow' | abpLocalization }}</p>
+            <h2 class="h4 mb-0" id="pantry-edit-title">{{ '::Pantry:EditTitle' | abpLocalization }}</h2>
+          </div>
+          <button class="btn-close" type="button" [attr.aria-label]="'::Pantry:Close' | abpLocalization" [disabled]="saving()" (click)="closeEdit()"></button>
+        </header>
+
+        <form [formGroup]="editForm" (ngSubmit)="saveEdit()" novalidate>
+          @if (editError(); as errorMessage) {
+            <div class="alert alert-danger" role="alert">{{ errorMessage | abpLocalization }}</div>
+          }
+          <div class="mb-3">
+            <label class="form-label" for="pantry-quantity">{{ '::Pantry:Quantity' | abpLocalization }}</label>
+            <input id="pantry-quantity" class="form-control" type="number" min="0" step="any" formControlName="cantidad" />
+            @if (editForm.controls.cantidad.touched && editForm.controls.cantidad.hasError('min')) {
+              <div class="invalid-feedback d-block">{{ '::Pantry:QuantityNonNegative' | abpLocalization }}</div>
+            }
+            @if (editForm.touched && editForm.hasError('quantityUnitPair')) {
+              <div class="invalid-feedback d-block">{{ '::Pantry:QuantityUnitPair' | abpLocalization }}</div>
+            }
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="pantry-unit">{{ '::Pantry:Unit' | abpLocalization }}</label>
+            <input id="pantry-unit" class="form-control" type="text" maxlength="20" formControlName="unidad" />
+            @if (editForm.controls.unidad.touched && editForm.controls.unidad.hasError('maxlength')) {
+              <div class="invalid-feedback d-block">{{ '::Pantry:UnitTooLong' | abpLocalization }}</div>
+            }
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="pantry-expiry">{{ '::Pantry:Expiry' | abpLocalization }}</label>
+            <input id="pantry-expiry" class="form-control" type="date" formControlName="fechaVencimiento" />
+            @if (editForm.controls.fechaVencimiento.touched && editForm.controls.fechaVencimiento.hasError('invalidDate')) {
+              <div class="invalid-feedback d-block">{{ '::Pantry:InvalidDate' | abpLocalization }}</div>
+            }
+          </div>
+          <footer class="edit-panel-footer">
+            <button class="btn btn-outline-secondary" type="button" [disabled]="saving()" (click)="closeEdit()">
+              {{ '::Pantry:Cancel' | abpLocalization }}
+            </button>
+            <button class="btn btn-primary" type="submit" [disabled]="editForm.invalid || saving()">
+              @if (saving()) {
+                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                {{ '::Pantry:Saving' | abpLocalization }}
+              } @else {
+                {{ '::Pantry:Save' | abpLocalization }}
+              }
+            </button>
+          </footer>
+        </form>
+      </section>
+    </div>
+  }
+</main>
