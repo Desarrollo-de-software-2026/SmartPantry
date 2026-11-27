@@ -53,7 +53,6 @@ public class CreateItemDespensaDto : IValidatableObject
     }
 }
 
-
 public class UpdateItemDespensaDto : IValidatableObject
 {
     [Range(typeof(decimal), "0", "999999999999999999.99", ParseLimitsInInvariantCulture = true)]

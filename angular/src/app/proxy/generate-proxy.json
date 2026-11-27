@@ -2575,6 +2575,29 @@
                   }
                 },
                 {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "SmartPantry.Despensas.CreateItemDespensaDto, SmartPantry.Application.Contracts",
+                      "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                      "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "summary": null,
+                      "description": null,
+                      "displayName": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "SmartPantry.Despensas.ItemDespensaDto",
+                    "typeSimple": "SmartPantry.Despensas.ItemDespensaDto",
+                    "summary": null,
+                    "contentTypes": null,
+                    "isRemoteStream": false
+                  }
+                },
+                {
                   "name": "UpdateAsync",
                   "parametersOnMethod": [
                     {
@@ -2750,6 +2773,66 @@
               "returnValue": {
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Despensas.ItemDespensaDto>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Despensas.ItemDespensaDto>",
+                "summary": null,
+                "contentTypes": [
+                  "text/plain",
+                  "application/json",
+                  "text/json"
+                ],
+                "isRemoteStream": false
+              },
+              "allowAnonymous": false,
+              "authorizeDatas": [
+                {
+                  "policy": null,
+                  "roles": null
+                }
+              ],
+              "implementFrom": "SmartPantry.Despensas.IItemDespensaAppService",
+              "summary": null,
+              "remarks": null,
+              "description": null,
+              "displayName": null
+            },
+            "CreateAsyncByInput": {
+              "uniqueName": "CreateAsyncByInput",
+              "name": "CreateAsync",
+              "httpMethod": "POST",
+              "url": "api/app/item-despensa",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "SmartPantry.Despensas.CreateItemDespensaDto, SmartPantry.Application.Contracts",
+                  "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": "",
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "returnValue": {
+                "type": "SmartPantry.Despensas.ItemDespensaDto",
+                "typeSimple": "SmartPantry.Despensas.ItemDespensaDto",
                 "summary": null,
                 "contentTypes": [
                   "text/plain",

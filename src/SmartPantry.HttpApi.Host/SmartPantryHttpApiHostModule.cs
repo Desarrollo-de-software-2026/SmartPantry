@@ -327,7 +327,20 @@ public class SmartPantryHttpApiHostModule : AbpModule
         app.UseRouting();
         app.Use(async (httpContext, next) =>
         {
-            await next();
+            try
+            {
+                await next();
+            }
+            catch (OperationCanceledException) when (httpContext.RequestAborted.IsCancellationRequested)
+            {
+                // El navegador cerró la solicitud mientras el servidor la procesaba.
+                return;
+            }
+            catch (IOException) when (httpContext.RequestAborted.IsCancellationRequested)
+            {
+                // Kestrel puede reportar el cierre del cliente como un reset del stream.
+                return;
+            }
 
             if (!httpContext.Request.Path.StartsWithSegments("/api") ||
                 httpContext.Response.StatusCode != StatusCodes.Status302Found)

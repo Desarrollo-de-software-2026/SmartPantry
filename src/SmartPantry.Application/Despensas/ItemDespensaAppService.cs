@@ -68,6 +68,45 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
             items.Select(x => MapItem(x, productNames.GetValueOrDefault(x.IdProducto))).ToList());
     }
 
+    public async Task<ItemDespensaDto> CreateAsync(CreateItemDespensaDto input)
+    {
+        var userId = GetCurrentUserId();
+
+        // Solo se puede agregar un producto que ya exista en el catálogo.
+        var product = await _productoRepository.FindAsync(input.IdProducto);
+        if (product == null)
+        {
+            throw new EntityNotFoundException(typeof(Producto), input.IdProducto);
+        }
+
+        // Busca la despensa del usuario o crea una si todavía no tiene.
+        var pantry = await _despensaRepository.FirstOrDefaultAsync(
+            x => x.IdUsuario == userId);
+
+        if (pantry == null)
+        {
+            pantry = new Despensa(GuidGenerator.Create(), userId);
+            await _despensaRepository.InsertAsync(pantry, autoSave: true);
+        }
+
+        var item = new ItemDespensa(
+            GuidGenerator.Create(),
+            input.IdProducto,
+            input.Cantidad.HasValue
+                ? new Cantidad(input.Cantidad.Value, input.Unidad!.Trim())
+                : null,
+            input.FechaVencimiento.HasValue
+                ? new FechaVencimiento(input.FechaVencimiento.Value.Date)
+                : null,
+            new Nota(input.Nota?.Trim() ?? string.Empty));
+
+        pantry.AgregarItem(item);
+
+        await _itemRepository.InsertAsync(item, autoSave: true);
+
+        return MapItem(item, product.Nombre);
+    }
+
     public async Task<ItemDespensaDto> UpdateAsync(Guid id, UpdateItemDespensaDto input)
     {
         var item = await GetOwnedItemAsync(id);
@@ -154,39 +193,4 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
         };
     }
 
-    public async Task<ItemDespensaDto> CreateAsync(CreateItemDespensaDto input)
-    {
-        var userId = GetCurrentUserId();
-
-        var product = await _productoRepository.FindAsync(input.IdProducto);
-        if (product == null)
-        {
-            throw new EntityNotFoundException(typeof(Producto), input.IdProducto);
-        }
-
-        var pantry = await _despensaRepository.FirstOrDefaultAsync(
-            x => x.IdUsuario == userId);
-
-        if (pantry == null)
-        {
-            pantry = new Despensa(GuidGenerator.Create(), userId);
-            await _despensaRepository.InsertAsync(pantry);
-        }
-
-        var item = new ItemDespensa(
-            GuidGenerator.Create(),
-            product.Id,
-            input.Cantidad.HasValue
-                ? new Cantidad(input.Cantidad.Value, input.Unidad!.Trim())
-                : null,
-            input.FechaVencimiento.HasValue
-                ? new FechaVencimiento(input.FechaVencimiento.Value.Date)
-                : null,
-            new Nota(input.Nota?.Trim() ?? string.Empty));
-
-        pantry.AgregarItem(item);
-        await _itemRepository.InsertAsync(item);
-
-        return MapItem(item, product.Nombre);
-    }
 }
