@@ -33,6 +33,13 @@ function configureRoutes() {
     },
     // 👇 Agrega esta nueva entrada para tu despensa
     {
+      path: '/catalogo',
+      name: '::Menu:Catalog',
+      iconClass: 'fas fa-search',
+      order: 4,
+      layout: eLayoutType.application,
+    },
+    {
       path: '/pantry',
       name: '::Menu:Pantry',
       iconClass: 'fas fa-utensils', // Puedes cambiar el ícono si prefieres otro de FontAwesome
@@ -42,3 +49,4 @@ function configureRoutes() {
     },
   ]);
 }
+

@@ -57,7 +57,6 @@ public class SmartPantryDbContext :
     public DbSet<IdentitySession> Sessions { get; set; }
 
     #endregion
-
     public SmartPantryDbContext(DbContextOptions<SmartPantryDbContext> options)
         : base(options)
     {
@@ -140,6 +139,8 @@ public class SmartPantryDbContext :
             b.Property(x => x.Marca).IsRequired().HasMaxLength(ProductoConsts.MaxMarcaLength);
             b.Property(x => x.Categoria).IsRequired().HasMaxLength(ProductoConsts.MaxCategoriaLength);
             b.Property(x => x.UrlImagen).HasMaxLength(ProductoConsts.MaxUrlImagenLength);
+            b.Property(x => x.CodigoBarras).HasMaxLength(14);
+            b.HasIndex(x => x.CodigoBarras).IsUnique().HasFilter("[CodigoBarras] IS NOT NULL");
         });
 
         builder.Entity<Author>(b =>

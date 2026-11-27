@@ -28,11 +28,17 @@ public class ProductoAppService_Authorization_Tests
         var method = typeof(ProductoAppService).GetMethod(nameof(ProductoAppService.GetExternalAsync));
         method.ShouldNotBeNull();
 
-        var authorizeAttribute = method!.GetCustomAttribute<AuthorizeAttribute>(inherit: true);
+        // La autorización está aplicada a toda la clase, así que también protege
+        // este método. La prueba debe verificar esa configuración heredada y que
+        // el método no permita acceso anónimo ni exija un rol de administrador.
+        var authorizeAttribute = typeof(ProductoAppService)
+            .GetCustomAttribute<AuthorizeAttribute>(inherit: true);
+        var allowAnonymousAttribute = method!.GetCustomAttribute<AllowAnonymousAttribute>(inherit: true);
 
         authorizeAttribute.ShouldNotBeNull();
         authorizeAttribute!.Roles.ShouldBeNull();
         authorizeAttribute.Policy.ShouldBeNull();
+        allowAnonymousAttribute.ShouldBeNull();
     }
 
     [Fact]

@@ -2965,6 +2965,75 @@
               "name": "IProductoAppService",
               "methods": [
                 {
+                  "name": "GetExternalAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "SmartPantry.Productos.GetExternalProductInput, SmartPantry.Application.Contracts",
+                      "type": "SmartPantry.Productos.GetExternalProductInput",
+                      "typeSimple": "SmartPantry.Productos.GetExternalProductInput",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "summary": null,
+                      "description": null,
+                      "displayName": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "SmartPantry.Productos.ExternalProductDto",
+                    "typeSimple": "SmartPantry.Productos.ExternalProductDto",
+                    "summary": null,
+                    "contentTypes": null,
+                    "isRemoteStream": false
+                  }
+                },
+                {
+                  "name": "SearchExternalAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "SmartPantry.Productos.SearchExternalProductsInput, SmartPantry.Application.Contracts",
+                      "type": "SmartPantry.Productos.SearchExternalProductsInput",
+                      "typeSimple": "SmartPantry.Productos.SearchExternalProductsInput",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "summary": null,
+                      "description": null,
+                      "displayName": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Productos.ExternalProductDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Productos.ExternalProductDto>",
+                    "summary": null,
+                    "contentTypes": null,
+                    "isRemoteStream": false
+                  }
+                },
+                {
+                  "name": "SaveExternalAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "SmartPantry.Productos.GetExternalProductInput, SmartPantry.Application.Contracts",
+                      "type": "SmartPantry.Productos.GetExternalProductInput",
+                      "typeSimple": "SmartPantry.Productos.GetExternalProductInput",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "summary": null,
+                      "description": null,
+                      "displayName": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "SmartPantry.Productos.SaveExternalProductResultDto",
+                    "typeSimple": "SmartPantry.Productos.SaveExternalProductResultDto",
+                    "summary": null,
+                    "contentTypes": null,
+                    "isRemoteStream": false
+                  }
+                },
+                {
                   "name": "GetAsync",
                   "parametersOnMethod": [
                     {
@@ -3146,13 +3215,129 @@
                 {
                   "policy": null,
                   "roles": null
-                },
+                }
+              ],
+              "implementFrom": "SmartPantry.Productos.IProductoAppService",
+              "summary": null,
+              "remarks": null,
+              "description": null,
+              "displayName": null
+            },
+            "SearchExternalAsyncByInput": {
+              "uniqueName": "SearchExternalAsyncByInput",
+              "name": "SearchExternalAsync",
+              "httpMethod": "POST",
+              "url": "api/app/producto/search-external",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "SmartPantry.Productos.SearchExternalProductsInput, SmartPantry.Application.Contracts",
+                  "type": "SmartPantry.Productos.SearchExternalProductsInput",
+                  "typeSimple": "SmartPantry.Productos.SearchExternalProductsInput",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "SmartPantry.Productos.SearchExternalProductsInput",
+                  "typeSimple": "SmartPantry.Productos.SearchExternalProductsInput",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": "",
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Productos.ExternalProductDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Productos.ExternalProductDto>",
+                "summary": null,
+                "contentTypes": [
+                  "text/plain",
+                  "application/json",
+                  "text/json"
+                ],
+                "isRemoteStream": false
+              },
+              "allowAnonymous": false,
+              "authorizeDatas": [
                 {
                   "policy": null,
                   "roles": null
                 }
               ],
-              "implementFrom": "SmartPantry.Productos.ProductoAppService",
+              "implementFrom": "SmartPantry.Productos.IProductoAppService",
+              "summary": null,
+              "remarks": null,
+              "description": null,
+              "displayName": null
+            },
+            "SaveExternalAsyncByInput": {
+              "uniqueName": "SaveExternalAsyncByInput",
+              "name": "SaveExternalAsync",
+              "httpMethod": "POST",
+              "url": "api/app/producto/save-external",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "SmartPantry.Productos.GetExternalProductInput, SmartPantry.Application.Contracts",
+                  "type": "SmartPantry.Productos.GetExternalProductInput",
+                  "typeSimple": "SmartPantry.Productos.GetExternalProductInput",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "SmartPantry.Productos.GetExternalProductInput",
+                  "typeSimple": "SmartPantry.Productos.GetExternalProductInput",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": "",
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "returnValue": {
+                "type": "SmartPantry.Productos.SaveExternalProductResultDto",
+                "typeSimple": "SmartPantry.Productos.SaveExternalProductResultDto",
+                "summary": null,
+                "contentTypes": [
+                  "text/plain",
+                  "application/json",
+                  "text/json"
+                ],
+                "isRemoteStream": false
+              },
+              "allowAnonymous": false,
+              "authorizeDatas": [
+                {
+                  "policy": null,
+                  "roles": null
+                }
+              ],
+              "implementFrom": "SmartPantry.Productos.IProductoAppService",
               "summary": null,
               "remarks": null,
               "description": null,
@@ -8402,6 +8587,22 @@
           "displayName": null
         },
         {
+          "name": "Category",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
           "name": "Quantity",
           "jsonName": null,
           "type": "System.String",
@@ -8429,6 +8630,70 @@
           "maximum": null,
           "regex": null,
           "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Ingredients",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Allergens",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "NutriScore",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "NovaGroup",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
           "summary": null,
           "description": null,
           "displayName": null
@@ -8520,7 +8785,7 @@
           "maxLength": 14,
           "minimum": null,
           "maximum": null,
-          "regex": null,
+          "regex": "^\\d{8,14}$",
           "isNullable": false,
           "summary": null,
           "description": null,
@@ -8626,6 +8891,128 @@
           "maxLength": null,
           "minimum": null,
           "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "CodigoBarras",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        }
+      ],
+      "summary": null,
+      "remarks": null,
+      "description": null,
+      "displayName": null
+    },
+    "SmartPantry.Productos.SaveExternalProductResultDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Producto",
+          "jsonName": null,
+          "type": "SmartPantry.Productos.ProductoDto",
+          "typeSimple": "SmartPantry.Productos.ProductoDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "YaExistia",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        }
+      ],
+      "summary": null,
+      "remarks": null,
+      "description": null,
+      "displayName": null
+    },
+    "SmartPantry.Productos.SearchExternalProductsInput": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Query",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": 2,
+          "maxLength": 80,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Page",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "2147483647",
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "PageSize",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "50",
           "regex": null,
           "isNullable": false,
           "summary": null,

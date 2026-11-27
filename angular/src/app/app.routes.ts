@@ -34,4 +34,10 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./pantry/pantry').then(c => c.Pantry),
     canActivate: [authGuard],
   },
+  {
+    path: 'catalogo',
+    loadComponent: () => import('./catalogo/catalogo').then(c => c.Catalogo),
+    canActivate: [authGuard],
+  },
 ];
+

@@ -10,6 +10,7 @@ public class Producto : AuditedAggregateRoot<Guid>
     public string Marca { get; private set; }
     public string Categoria { get; private set; }
     public string UrlImagen { get; private set; }
+    public string? CodigoBarras { get; private set; }
 
     private Producto()
     {
@@ -72,5 +73,11 @@ public class Producto : AuditedAggregateRoot<Guid>
             ProductoConsts.MaxCategoriaLength);
 
         Categoria = categoria.Trim();
+    }
+    public void EstablecerCodigoBarras(string? codigoBarras)
+    {
+        CodigoBarras = string.IsNullOrWhiteSpace(codigoBarras)
+            ? null
+            : codigoBarras.Trim();
     }
 }

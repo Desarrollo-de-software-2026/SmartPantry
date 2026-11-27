@@ -1,0 +1,85 @@
+<main class="catalog-page container-fluid py-4">
+  <header class="catalog-heading mb-4">
+    <p class="catalog-eyebrow mb-1">{{ '::Catalog:Eyebrow' | abpLocalization }}</p>
+    <h1 class="h2 mb-1">{{ '::Catalog:Title' | abpLocalization }}</h1>
+    <p class="text-secondary mb-0">{{ '::Catalog:Subtitle' | abpLocalization }}</p>
+  </header>
+
+  <section class="catalog-search card p-3 p-md-4 mb-4">
+    <div class="btn-group mb-3" role="group" [attr.aria-label]="'::Catalog:SearchMode' | abpLocalization">
+      <button type="button" class="btn" [class.btn-primary]="mode() === 'text'" [class.btn-outline-primary]="mode() !== 'text'" (click)="setMode('text')">{{ '::Catalog:TextMode' | abpLocalization }}</button>
+      <button type="button" class="btn" [class.btn-primary]="mode() === 'barcode'" [class.btn-outline-primary]="mode() !== 'barcode'" (click)="setMode('barcode')">{{ '::Catalog:BarcodeMode' | abpLocalization }}</button>
+    </div>
+    <form (ngSubmit)="search()">
+      @if (mode() === 'text') {
+        <label class="form-label" for="catalog-query">{{ '::Catalog:QueryLabel' | abpLocalization }}</label>
+        <input id="catalog-query" name="query" class="form-control" [(ngModel)]="query" minlength="2" maxlength="80" required />
+      } @else {
+        <label class="form-label" for="catalog-barcode">{{ '::Catalog:BarcodeLabel' | abpLocalization }}</label>
+        <input id="catalog-barcode" name="barcode" class="form-control" [(ngModel)]="barcode" inputmode="numeric" maxlength="14" required />
+      }
+      <button class="btn btn-primary mt-3" type="submit" [disabled]="searching()">{{ (searching() ? '::Catalog:Searching' : '::Catalog:Search') | abpLocalization }}</button>
+    </form>
+  </section>
+
+  @if (errorKey(); as error) { <div class="alert alert-danger" role="alert">{{ errorMessage() || (error | abpLocalization) }}</div> }
+  @if (searching()) { <div class="catalog-state" role="status" aria-live="polite"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> {{ '::Catalog:Loading' | abpLocalization }}</div> }
+  @if (searched() && !searching() && results().length === 0 && !errorKey()) { <div class="catalog-state">{{ '::Catalog:NoResults' | abpLocalization }}</div> }
+
+  @if (results().length > 0) {
+    <section class="catalog-results" [attr.aria-label]="'::Catalog:Results' | abpLocalization">
+      <h2 class="h5 mb-3">{{ '::Catalog:Results' | abpLocalization }} ({{ totalCount() }})</h2>
+      <div class="row">
+        @for (product of results(); track product.code) {
+          <div class="col-12 col-md-6 col-xl-4 mb-3">
+            <article class="catalog-card h-100" [class.catalog-card-saved]="product.isAlreadySaved">
+              @if (product.imageUrl) { <img class="catalog-image" [src]="product.imageUrl" [alt]="product.name || ('::Catalog:ProductImage' | abpLocalization)" /> }
+              <div class="p-3">
+                @if (product.isAlreadySaved) { <span class="catalog-saved-badge">{{ '::Catalog:AlreadySavedBadge' | abpLocalization }}</span> }
+                <h3 class="h5">{{ product.name || ('::Catalog:Unavailable' | abpLocalization) }}</h3>
+                <p class="mb-1"><strong>{{ '::Catalog:Brand' | abpLocalization }}:</strong> {{ product.brand || ('::Catalog:Unavailable' | abpLocalization) }}</p>
+                <p class="mb-3"><strong>{{ '::Catalog:Category' | abpLocalization }}:</strong> {{ product.category || ('::Catalog:Unavailable' | abpLocalization) }}</p>
+                <button class="btn btn-outline-primary" type="button" (click)="openDetails(product)" [disabled]="loadingDetails()">{{ '::Catalog:OpenDetails' | abpLocalization }}</button>
+              </div>
+            </article>
+          </div>
+        }
+      </div>
+      @if (mode() === 'text' && totalCount() > pageSize) {
+        <nav class="catalog-pagination" [attr.aria-label]="'::Catalog:Pagination' | abpLocalization">
+          <button class="btn btn-outline-primary" type="button" (click)="changePage(-1)" [disabled]="page() <= 1">{{ '::Catalog:Previous' | abpLocalization }}</button>
+          <span>{{ '::Catalog:Page' | abpLocalization }} {{ page() }} / {{ pageCount }}</span>
+          <button class="btn btn-outline-primary" type="button" (click)="changePage(1)" [disabled]="page() >= pageCount">{{ '::Catalog:Next' | abpLocalization }}</button>
+        </nav>
+      }
+    </section>
+  }
+
+  @if (selected(); as product) {
+    <section id="catalog-detail" class="catalog-detail card p-3 p-md-4 mt-4" aria-live="polite">
+      <div class="d-flex flex-wrap justify-content-between gap-2 align-items-start">
+        <div><p class="catalog-eyebrow mb-1">{{ '::Catalog:DetailEyebrow' | abpLocalization }}</p><h2 class="h4">{{ product.name || ('::Catalog:Unavailable' | abpLocalization) }}</h2></div>
+        <button class="btn" [class.btn-primary]="!product.isAlreadySaved" [class.btn-danger]="product.isAlreadySaved" type="button" (click)="saveSelected()" [disabled]="saving() || !product.code || product.isAlreadySaved">
+          {{ (saving() ? '::Catalog:Saving' : product.isAlreadySaved ? (saveState() === 'saved' ? '::Catalog:SavedButton' : '::Catalog:AlreadySavedButton') : '::Catalog:Save') | abpLocalization }}
+        </button>
+      </div>
+      @if (loadingDetails()) { <p class="catalog-state mt-2 mb-0" role="status">{{ '::Catalog:LoadingDetails' | abpLocalization }}</p> }
+      @if (saveMessageKey(); as message) { <div class="alert alert-success mt-2" role="status">{{ message | abpLocalization }}</div> }
+      <dl class="catalog-detail-grid mt-3">
+        <div><dt>{{ '::Catalog:Code' | abpLocalization }}</dt><dd>{{ product.code || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Brand' | abpLocalization }}</dt><dd>{{ product.brand || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Category' | abpLocalization }}</dt><dd>{{ product.category || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Quantity' | abpLocalization }}</dt><dd>{{ product.quantity || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Ingredients' | abpLocalization }}</dt><dd>{{ product.ingredients || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Allergens' | abpLocalization }}</dt><dd>{{ product.allergens || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:NutriScore' | abpLocalization }}</dt><dd>{{ product.nutriScore || ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Nova' | abpLocalization }}</dt><dd>{{ product.novaGroup ?? ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Energy' | abpLocalization }}</dt><dd>{{ product.energyKcal100g ?? ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Fat' | abpLocalization }}</dt><dd>{{ product.fat100g ?? ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Sugars' | abpLocalization }}</dt><dd>{{ product.sugars100g ?? ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+        <div><dt>{{ '::Catalog:Salt' | abpLocalization }}</dt><dd>{{ product.salt100g ?? ('::Catalog:Unavailable' | abpLocalization) }}</dd></div>
+      </dl>
+    </section>
+  }
+</main>
+

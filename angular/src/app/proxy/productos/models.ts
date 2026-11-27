@@ -11,8 +11,14 @@ export interface ExternalProductDto {
   code?: string;
   name?: string;
   brand?: string;
+  category?: string;
   quantity?: string;
   imageUrl?: string;
+  isAlreadySaved?: boolean;
+  ingredients?: string | null;
+  allergens?: string | null;
+  nutriScore?: string | null;
+  novaGroup?: number | null;
   energyKcal100g?: number | null;
   fat100g?: number | null;
   sugars100g?: number | null;
@@ -32,6 +38,18 @@ export interface ProductoDto extends AuditedEntityDto<string> {
   marca?: string;
   categoria?: string;
   urlImagen?: string;
+  codigoBarras?: string | null;
+}
+
+export interface SaveExternalProductResultDto {
+  producto?: ProductoDto;
+  yaExistia?: boolean;
+}
+
+export interface SearchExternalProductsInput {
+  query: string;
+  page?: number;
+  pageSize?: number;
 }
 
 export interface UpdateProductoDto {

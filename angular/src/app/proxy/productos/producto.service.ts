@@ -1,4 +1,4 @@
-import type { CreateProductoDto, ExternalProductDto, GetExternalProductInput, GetProductosInput, ProductoDto, UpdateProductoDto } from './models';
+import type { CreateProductoDto, ExternalProductDto, GetExternalProductInput, GetProductosInput, ProductoDto, SaveExternalProductResultDto, SearchExternalProductsInput, UpdateProductoDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedResultDto } from '@abp/ng.core';
 import { Injectable, inject } from '@angular/core';
@@ -54,6 +54,26 @@ export class ProductoService {
       headers: { Accept: 'application/json' },
       url: '/api/app/producto',
       params: { filter: input.filter, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+    },
+    { apiName: this.apiName,...config });
+  
+
+  saveExternal = (input: GetExternalProductInput, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, SaveExternalProductResultDto>({
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      url: '/api/app/producto/save-external',
+      body: input,
+    },
+    { apiName: this.apiName,...config });
+  
+
+  searchExternal = (input: SearchExternalProductsInput, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, PagedResultDto<ExternalProductDto>>({
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      url: '/api/app/producto/search-external',
+      body: input,
     },
     { apiName: this.apiName,...config });
   
