@@ -17,6 +17,7 @@ public class ProductoAppService : CrudAppService<
     IProductoAppService
 {
     private readonly IExternalProductCatalogClient? _externalProductCatalogClient;
+    private readonly ExternalProductPreferenceMatcher? _preferenceMatcher;
 
     // 1. Constructor para el CRUD clásico (usado por las pruebas anteriores y el contenedor base)
     public ProductoAppService(IRepository<Producto, Guid> repository) : base(repository)
@@ -31,6 +32,15 @@ public class ProductoAppService : CrudAppService<
         _externalProductCatalogClient = externalProductCatalogClient;
     }
 
+    public ProductoAppService(
+        IRepository<Producto, Guid> repository,
+        IExternalProductCatalogClient externalProductCatalogClient,
+        ExternalProductPreferenceMatcher preferenceMatcher) : base(repository)
+    {
+        _externalProductCatalogClient = externalProductCatalogClient;
+        _preferenceMatcher = preferenceMatcher;
+    }
+
     // Método del TP07: Consulta externa por código de barras
     [Authorize]
     public async Task<ExternalProductDto?> GetExternalAsync(GetExternalProductInput input)
@@ -40,6 +50,9 @@ public class ProductoAppService : CrudAppService<
             throw new InvalidOperationException("El cliente externo no está configurado.");
         }
 
-        return await _externalProductCatalogClient.GetByBarcodeAsync(input.Barcode);
+        var product = await _externalProductCatalogClient.GetByBarcodeAsync(input.Barcode);
+        if (product != null && CurrentUser.Id.HasValue && _preferenceMatcher != null)
+            await _preferenceMatcher.ApplyAsync(CurrentUser.Id.Value, product);
+        return product;
     }
 }

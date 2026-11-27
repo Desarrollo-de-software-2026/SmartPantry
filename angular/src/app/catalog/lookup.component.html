@@ -1,0 +1,57 @@
+<main class="lookup-page container-fluid py-4">
+  <header class="mb-4">
+    <p class="eyebrow mb-1">{{ '::Catalog:Eyebrow' | abpLocalization }}</p>
+    <h1 class="h2 mb-1">{{ '::Catalog:Title' | abpLocalization }}</h1>
+    <p class="text-secondary">{{ '::Catalog:Subtitle' | abpLocalization }}</p>
+  </header>
+
+  <form class="lookup-form mb-4" [formGroup]="form" (ngSubmit)="lookup()" novalidate>
+    <label class="form-label" for="catalog-barcode">{{ '::Catalog:Barcode' | abpLocalization }}</label>
+    <div class="input-group">
+      <input id="catalog-barcode" class="form-control" type="text" inputmode="numeric" autocomplete="off"
+        maxlength="14" formControlName="barcode" />
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || loading()">
+        {{ (loading() ? '::Catalog:Loading' : '::Catalog:Search') | abpLocalization }}
+      </button>
+    </div>
+    @if (form.controls.barcode.touched && form.controls.barcode.invalid) {
+      <div class="text-danger small mt-1">{{ '::Catalog:InvalidBarcode' | abpLocalization }}</div>
+    }
+  </form>
+
+  @if (error()) { <div class="alert alert-warning" role="alert">{{ '::Catalog:NotFound' | abpLocalization }}</div> }
+  @if (product(); as item) {
+    <article class="card product-detail">
+      <div class="card-body">
+        <div class="product-layout">
+          @if (item.imageUrl) { <img class="product-image" [src]="item.imageUrl" [alt]="item.name || ''" /> }
+          <div>
+            <p class="eyebrow mb-1">{{ '::Catalog:ExternalSource' | abpLocalization }}</p>
+            <h2 class="h4">{{ item.name || ('::Catalog:Unavailable' | abpLocalization) }}</h2>
+            <p class="mb-1">{{ item.brand || ('::Catalog:Unavailable' | abpLocalization) }}</p>
+            <p class="small text-secondary">{{ '::Catalog:Barcode' | abpLocalization }}: {{ item.code }}</p>
+            @if (item.ingredientsText) {
+              <h3 class="h6 mt-3">{{ '::Catalog:Ingredients' | abpLocalization }}</h3>
+              <p>{{ item.ingredientsText }}</p>
+            }
+            @if (item.allergens?.length) {
+              <p><strong>{{ '::Catalog:Allergens' | abpLocalization }}:</strong> {{ item.allergens?.join(', ') }}</p>
+            }
+          </div>
+        </div>
+
+        @if (!item.preferenceDataAvailable) {
+          <div class="alert alert-secondary mt-3 mb-0" role="status">{{ '::Catalog:NoPreferenceData' | abpLocalization }}</div>
+        } @else if (item.matchedPreferences?.length) {
+          <div class="alert alert-warning mt-3 mb-0" role="alert">
+            <strong>{{ '::Catalog:PreferenceWarning' | abpLocalization }}</strong>
+            <span> {{ item.matchedPreferences?.join(', ') }}</span>
+          </div>
+        } @else {
+          <div class="alert alert-success mt-3 mb-0" role="status">{{ '::Catalog:NoPreferenceMatch' | abpLocalization }}</div>
+        }
+        <p class="small text-secondary mt-3 mb-0">{{ '::Catalog:Disclaimer' | abpLocalization }}</p>
+      </div>
+    </article>
+  }
+</main>

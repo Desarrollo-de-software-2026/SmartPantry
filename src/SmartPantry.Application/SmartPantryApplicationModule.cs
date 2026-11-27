@@ -28,6 +28,8 @@ public class SmartPantryApplicationModule : AbpModule
         {
             options.AddMaps<SmartPantryApplicationModule>();
         });
+
+        context.Services.AddSingleton<Productos.IExternalCatalogMetrics, Productos.ExternalCatalogMetrics>();
     }
 }
 
