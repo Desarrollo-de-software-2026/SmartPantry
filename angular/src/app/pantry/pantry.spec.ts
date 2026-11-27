@@ -78,14 +78,16 @@ describe('Pantry component', () => {
       totalCount: 1,
     }));
 
-    await vi.waitFor(() => expect(component.itemsResource.value().items.length).toBe(1));
+    await vi.waitFor(() =>
+      expect(component.itemsResource.value().items?.length).toBe(1),
+    );
 
-    expect(component.itemsResource.value().items[0].nombreProducto).toBe('Arroz');
+    expect(component.itemsResource.value().items?.[0]?.nombreProducto).toBe('Arroz');
   });
 
   it('does not call update when the edit form contains invalid values', () => {
     component.editingItem.set({ id: 'item-1' } as ItemDespensaDto);
-    component.editForm.setValue({ cantidad: -2, unidad: 'kg', fechaVencimiento: '' });
+    component.editForm.setValue({ cantidad: -2, unidad: 'kg', fechaVencimiento: '', nota: ''});
 
     component.saveEdit();
 
@@ -94,7 +96,12 @@ describe('Pantry component', () => {
 
   it('updates an item with valid form values and refreshes the list', () => {
     component.editingItem.set({ id: 'item-1' } as ItemDespensaDto);
-    component.editForm.setValue({ cantidad: 2, unidad: ' kg ', fechaVencimiento: '2026-12-15' });
+    component.editForm.setValue({
+      cantidad: 2,
+      unidad: 'kg',
+      fechaVencimiento: '2026-12-15',
+      nota: 'Prueba de edición',
+    });
 
     component.saveEdit();
 
@@ -102,6 +109,7 @@ describe('Pantry component', () => {
       cantidad: 2,
       unidad: 'kg',
       fechaVencimiento: '2026-12-15',
+      nota: 'Prueba de edición',
     }, { skipHandleError: true });
     expect(component.editOpen()).toBe(false);
     expect(component.saving()).toBe(false);
