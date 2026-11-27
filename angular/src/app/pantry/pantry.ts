@@ -12,6 +12,8 @@ import {
 } from '@abp/ng.theme.shared';
 import { ItemDespensaDto, ItemDespensaService } from '../proxy/despensas';
 import { asCalendarDate } from './pantry-date';
+import { ProductoDto } from '../proxy/productos/models';
+import { ProductoService } from '../proxy/productos/producto.service';
 
 const quantityUnitPairValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const quantity = group.get('cantidad')?.value;
@@ -64,6 +66,26 @@ export class Pantry {
       cantidad: [null as number | null, [Validators.min(0)]],
       unidad: ['', [Validators.maxLength(20)]],
       fechaVencimiento: ['', [validCalendarDate]],
+      nota: ['', [Validators.maxLength(250)]],
+    },
+    { validators: quantityUnitPairValidator },
+  );
+
+
+  private readonly productoService = inject(ProductoService);
+
+  readonly addOpen = signal(false);
+  readonly adding = signal(false);
+  readonly loadingSavedProducts = signal(false);
+  readonly savedProducts = signal<ProductoDto[]>([]);
+  readonly addError = signal<string | null>(null);
+
+  readonly addForm = this.formBuilder.group(
+    {
+      idProducto: ['', Validators.required],
+      cantidad: [null as number | null, [Validators.min(0)]],
+      unidad: ['', [Validators.maxLength(20)]],
+      fechaVencimiento: ['', [validCalendarDate]],
     },
     { validators: quantityUnitPairValidator },
   );
@@ -94,8 +116,72 @@ export class Pantry {
       cantidad: item.cantidad ?? null,
       unidad: item.unidad ?? '',
       fechaVencimiento: item.fechaVencimiento?.slice(0, 10) ?? '',
+      nota: item.nota ?? '',
     });
     this.editOpen.set(true);
+  }
+
+  openAdd(): void {
+    this.addError.set(null);
+    this.addForm.reset({
+      idProducto: '',
+      cantidad: null,
+      unidad: '',
+      fechaVencimiento: '',
+    });
+    this.addOpen.set(true);
+    this.loadingSavedProducts.set(true);
+
+    this.productoService.getList({
+      skipCount: 0,
+      maxResultCount: 100,
+      sorting: 'nombre',
+    }).subscribe({
+      next: response => {
+        this.savedProducts.set(response.items ?? []);
+        this.loadingSavedProducts.set(false);
+      },
+      error: () => {
+        this.addError.set('::Pantry:ActionError');
+        this.loadingSavedProducts.set(false);
+      },
+    });
+  }
+
+  closeAdd(): void {
+    if (this.adding()) return;
+    this.addOpen.set(false);
+    this.addError.set(null);
+  }
+
+  saveNewItem(): void {
+    if (this.addForm.invalid || this.adding()) {
+      this.addForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.addForm.getRawValue();
+
+    this.adding.set(true);
+    this.addError.set(null);
+
+    this.itemDespensaService.create({
+      idProducto: value.idProducto!,
+      cantidad: value.cantidad,
+      unidad: value.cantidad === null ? null : value.unidad?.trim() || null,
+      fechaVencimiento: value.fechaVencimiento || null,
+    }).subscribe({
+      next: () => {
+        this.adding.set(false);
+        this.addOpen.set(false);
+        this.list.get();
+      },
+      error: () => {
+        // El formulario sigue abierto y conserva lo ingresado.
+        this.adding.set(false);
+        this.addError.set('::Pantry:ActionError');
+      },
+    });
   }
 
   closeEdit(): void {
@@ -118,6 +204,7 @@ export class Pantry {
       cantidad: value.cantidad,
       unidad: value.cantidad === null ? null : value.unidad?.trim() || null,
       fechaVencimiento: value.fechaVencimiento || null,
+      nota: value.nota?.trim() ?? '',
     }, { skipHandleError: true }).subscribe({
       next: () => {
         this.saving.set(false);

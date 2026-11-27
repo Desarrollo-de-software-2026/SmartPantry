@@ -6,7 +6,6 @@ Repositorio del Trabajo Práctico Integrador de Desarrollo de Software 2026.
 
 - Garnier Anna **AnnaGarnier**
 - Garnier Sol **SolGarni**
-- Silva Luciano **TorianNomas**
 - Prado Valentina **bluerose04**
 
 ## Requisitos

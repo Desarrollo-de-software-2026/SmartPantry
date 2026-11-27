@@ -7,6 +7,7 @@ import { FormBuilder } from '@angular/forms';
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ItemDespensaDto, ItemDespensaService } from '../proxy/despensas';
+import { ProductoService } from '../proxy/productos/producto.service';
 import { Pantry } from './pantry';
 import { asCalendarDate } from './pantry-date';
 
@@ -18,10 +19,12 @@ describe('Pantry component', () => {
   let listService: { query$: Observable<unknown>; get: ReturnType<typeof vi.fn> };
   let service: {
     getList: ReturnType<typeof vi.fn>;
+    create: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
     markAsConsumed: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
   };
+  let productoService: { getList: ReturnType<typeof vi.fn> };
   let confirmation: { warn: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
@@ -29,9 +32,13 @@ describe('Pantry component', () => {
     listService = { query$: listQuery.asObservable(), get: vi.fn() };
     service = {
       getList: vi.fn(() => new Subject()),
+      create: vi.fn(() => of({})),
       update: vi.fn(() => of({})),
       markAsConsumed: vi.fn(() => of(void 0)),
       delete: vi.fn(() => of(void 0)),
+    };
+    productoService = {
+      getList: vi.fn(() => of({ items: [], totalCount: 0 })),
     };
     confirmation = { warn: vi.fn(() => of(Confirmation.Status.dismiss)) };
 
@@ -39,6 +46,7 @@ describe('Pantry component', () => {
       providers: [
         { provide: ListService, useValue: listService },
         { provide: ItemDespensaService, useValue: service },
+        { provide: ProductoService, useValue: productoService },
         { provide: ConfirmationService, useValue: confirmation },
         FormBuilder,
       ],
@@ -78,14 +86,16 @@ describe('Pantry component', () => {
       totalCount: 1,
     }));
 
-    await vi.waitFor(() => expect(component.itemsResource.value().items.length).toBe(1));
+    await vi.waitFor(() =>
+      expect(component.itemsResource.value().items?.length).toBe(1),
+    );
 
-    expect(component.itemsResource.value().items[0].nombreProducto).toBe('Arroz');
+    expect(component.itemsResource.value().items?.[0]?.nombreProducto).toBe('Arroz');
   });
 
   it('does not call update when the edit form contains invalid values', () => {
     component.editingItem.set({ id: 'item-1' } as ItemDespensaDto);
-    component.editForm.setValue({ cantidad: -2, unidad: 'kg', fechaVencimiento: '' });
+    component.editForm.setValue({ cantidad: -2, unidad: 'kg', fechaVencimiento: '', nota: ''});
 
     component.saveEdit();
 
@@ -94,7 +104,12 @@ describe('Pantry component', () => {
 
   it('updates an item with valid form values and refreshes the list', () => {
     component.editingItem.set({ id: 'item-1' } as ItemDespensaDto);
-    component.editForm.setValue({ cantidad: 2, unidad: ' kg ', fechaVencimiento: '2026-12-15' });
+    component.editForm.setValue({
+      cantidad: 2,
+      unidad: 'kg',
+      fechaVencimiento: '2026-12-15',
+      nota: 'Prueba de edición',
+    });
 
     component.saveEdit();
 
@@ -102,6 +117,7 @@ describe('Pantry component', () => {
       cantidad: 2,
       unidad: 'kg',
       fechaVencimiento: '2026-12-15',
+      nota: 'Prueba de edición',
     }, { skipHandleError: true });
     expect(component.editOpen()).toBe(false);
     expect(component.saving()).toBe(false);

@@ -31,5 +31,5 @@ public class UpdateProductoDto
 // Nuevo DTO para paginación y ordenamiento de listas
 public class GetProductosInput : PagedAndSortedResultRequestDto
 {
-    public string Filter { get; set; }
+    public string? Filter { get; set; }
 }

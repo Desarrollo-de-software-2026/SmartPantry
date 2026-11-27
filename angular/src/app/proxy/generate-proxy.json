@@ -2575,6 +2575,29 @@
                   }
                 },
                 {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "SmartPantry.Despensas.CreateItemDespensaDto, SmartPantry.Application.Contracts",
+                      "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                      "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "summary": null,
+                      "description": null,
+                      "displayName": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "SmartPantry.Despensas.ItemDespensaDto",
+                    "typeSimple": "SmartPantry.Despensas.ItemDespensaDto",
+                    "summary": null,
+                    "contentTypes": null,
+                    "isRemoteStream": false
+                  }
+                },
+                {
                   "name": "UpdateAsync",
                   "parametersOnMethod": [
                     {
@@ -2593,6 +2616,29 @@
                       "typeAsString": "SmartPantry.Despensas.UpdateItemDespensaDto, SmartPantry.Application.Contracts",
                       "type": "SmartPantry.Despensas.UpdateItemDespensaDto",
                       "typeSimple": "SmartPantry.Despensas.UpdateItemDespensaDto",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "summary": null,
+                      "description": null,
+                      "displayName": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "SmartPantry.Despensas.ItemDespensaDto",
+                    "typeSimple": "SmartPantry.Despensas.ItemDespensaDto",
+                    "summary": null,
+                    "contentTypes": null,
+                    "isRemoteStream": false
+                  }
+                },
+                {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "SmartPantry.Despensas.CreateItemDespensaDto, SmartPantry.Application.Contracts",
+                      "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                      "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
                       "isOptional": false,
                       "defaultValue": null,
                       "summary": null,
@@ -2727,6 +2773,66 @@
               "returnValue": {
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Despensas.ItemDespensaDto>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<SmartPantry.Despensas.ItemDespensaDto>",
+                "summary": null,
+                "contentTypes": [
+                  "text/plain",
+                  "application/json",
+                  "text/json"
+                ],
+                "isRemoteStream": false
+              },
+              "allowAnonymous": false,
+              "authorizeDatas": [
+                {
+                  "policy": null,
+                  "roles": null
+                }
+              ],
+              "implementFrom": "SmartPantry.Despensas.IItemDespensaAppService",
+              "summary": null,
+              "remarks": null,
+              "description": null,
+              "displayName": null
+            },
+            "CreateAsyncByInput": {
+              "uniqueName": "CreateAsyncByInput",
+              "name": "CreateAsync",
+              "httpMethod": "POST",
+              "url": "api/app/item-despensa",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "SmartPantry.Despensas.CreateItemDespensaDto, SmartPantry.Application.Contracts",
+                  "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": "",
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "returnValue": {
+                "type": "SmartPantry.Despensas.ItemDespensaDto",
+                "typeSimple": "SmartPantry.Despensas.ItemDespensaDto",
                 "summary": null,
                 "contentTypes": [
                   "text/plain",
@@ -2931,6 +3037,66 @@
                 "typeSimple": "System.Void",
                 "summary": null,
                 "contentTypes": null,
+                "isRemoteStream": false
+              },
+              "allowAnonymous": false,
+              "authorizeDatas": [
+                {
+                  "policy": null,
+                  "roles": null
+                }
+              ],
+              "implementFrom": "SmartPantry.Despensas.IItemDespensaAppService",
+              "summary": null,
+              "remarks": null,
+              "description": null,
+              "displayName": null
+            },
+            "CreateAsyncByInput": {
+              "uniqueName": "CreateAsyncByInput",
+              "name": "CreateAsync",
+              "httpMethod": "POST",
+              "url": "api/app/item-despensa",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "SmartPantry.Despensas.CreateItemDespensaDto, SmartPantry.Application.Contracts",
+                  "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "typeSimple": "SmartPantry.Despensas.CreateItemDespensaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": "",
+                  "summary": null,
+                  "description": null,
+                  "displayName": null
+                }
+              ],
+              "returnValue": {
+                "type": "SmartPantry.Despensas.ItemDespensaDto",
+                "typeSimple": "SmartPantry.Despensas.ItemDespensaDto",
+                "summary": null,
+                "contentTypes": [
+                  "text/plain",
+                  "application/json",
+                  "text/json"
+                ],
                 "isRemoteStream": false
               },
               "allowAnonymous": false,
@@ -8099,6 +8265,99 @@
       "description": null,
       "displayName": null
     },
+    "SmartPantry.Despensas.CreateItemDespensaDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "IdProducto",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Cantidad",
+          "jsonName": null,
+          "type": "System.Decimal?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "0",
+          "maximum": "999999999999999999.99",
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Unidad",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": 0,
+          "maxLength": 20,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "FechaVencimiento",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1900-01-01",
+          "maximum": "9999-12-31",
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Nota",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": 0,
+          "maxLength": 250,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        }
+      ],
+      "summary": null,
+      "remarks": null,
+      "description": null,
+      "displayName": null
+    },
     "SmartPantry.Despensas.ItemDespensaDto": {
       "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
       "isEnum": false,
@@ -8201,6 +8460,54 @@
           "summary": null,
           "description": null,
           "displayName": null
+        },
+        {
+          "name": "Nota",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "EstaVencido",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "ProximoAVencer",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null,
+          "isNullable": false,
+          "summary": null,
+          "description": null,
+          "displayName": null
         }
       ],
       "summary": null,
@@ -8257,6 +8564,22 @@
           "maxLength": null,
           "minimum": "1900-01-01",
           "maximum": "9999-12-31",
+          "regex": null,
+          "isNullable": true,
+          "summary": null,
+          "description": null,
+          "displayName": null
+        },
+        {
+          "name": "Nota",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": 0,
+          "maxLength": 250,
+          "minimum": null,
+          "maximum": null,
           "regex": null,
           "isNullable": true,
           "summary": null,
