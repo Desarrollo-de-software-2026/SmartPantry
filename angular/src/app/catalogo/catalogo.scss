@@ -1,0 +1,16 @@
+.catalog-page { max-width: 1200px; margin-inline: auto; color: #563447; }
+.catalog-eyebrow { color: #b13d73; font-size: .75rem; font-weight: 700; letter-spacing: .12em; }
+.catalog-search, .catalog-detail, .catalog-card { border: 1px solid #f0c7d8; border-radius: 1rem; background: #fff; }
+.catalog-card { overflow: hidden; }
+.catalog-image { width: 100%; height: 180px; object-fit: contain; padding: 1rem; background: #fffafd; }
+.catalog-state { padding: 1rem; border-radius: .75rem; background: #fff6fa; color: #563447; }
+.catalog-pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; padding-block: 1rem; }
+.catalog-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1rem; }
+.catalog-detail-grid div { min-width: 0; padding: .75rem; border-radius: .75rem; background: #fff7fa; }
+.catalog-detail-grid dt { color: #8a5f78; font-size: .85rem; }
+.catalog-detail-grid dd { margin: .25rem 0 0; overflow-wrap: anywhere; }
+
+@media (max-width: 575.98px) {
+  .catalog-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+  .catalog-detail-grid div { padding: .65rem; }
+}

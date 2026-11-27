@@ -1,13 +1,23 @@
-﻿using System;
+using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace SmartPantry.Productos;
 
 public interface IProductoAppService : ICrudAppService<
-    ProductoDto,          // DTO para mostrar los datos
-    Guid,                 // Tipo de la clave primaria (ID)
-    GetProductosInput,    // DTO para paginación, filtros y orden
-    CreateProductoDto,    // DTO para la creación
-    UpdateProductoDto>    // DTO para la modificación
+    ProductoDto,
+    Guid,
+    GetProductosInput,
+    CreateProductoDto,
+    UpdateProductoDto>
 {
+    Task<ExternalProductDto?> GetExternalAsync(GetExternalProductInput input);
+
+    Task<PagedResultDto<ExternalProductDto>> SearchExternalAsync(
+        SearchExternalProductsInput input);
+
+    Task<SaveExternalProductResultDto> SaveExternalAsync(
+        GetExternalProductInput input);
 }
