@@ -35,9 +35,17 @@ public class ProductoAppService : CrudAppService<
         _externalProductCatalogClient = externalProductCatalogClient;
     }
 
-    public Task<ExternalProductDto?> GetExternalAsync(GetExternalProductInput input)
+    public async Task<ExternalProductDto?> GetExternalAsync(GetExternalProductInput input)
     {
-        return CallExternalAsync(() => GetExternalClient().GetByBarcodeAsync(input.Barcode.Trim()));
+        var product = await CallExternalAsync(
+            () => GetExternalClient().GetByBarcodeAsync(input.Barcode.Trim()));
+        if (product != null)
+        {
+            product.IsAlreadySaved = await Repository.AnyAsync(
+                savedProduct => savedProduct.CodigoBarras == product.Code);
+        }
+
+        return product;
     }
 
     public async Task<PagedResultDto<ExternalProductDto>> SearchExternalAsync(
@@ -52,8 +60,15 @@ public class ProductoAppService : CrudAppService<
             throw new UserFriendlyException("Ingresá al menos dos letras o números para buscar.");
         }
 
-        return await CallExternalAsync(() =>
+        var result = await CallExternalAsync(() =>
             GetExternalClient().SearchAsync(query, input.Page, input.PageSize));
+        foreach (var product in result.Items)
+        {
+            product.IsAlreadySaved = await Repository.AnyAsync(
+                savedProduct => savedProduct.CodigoBarras == product.Code);
+        }
+
+        return result;
     }
 
     public async Task<SaveExternalProductResultDto> SaveExternalAsync(

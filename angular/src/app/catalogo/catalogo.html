@@ -32,9 +32,10 @@
       <div class="row">
         @for (product of results(); track product.code) {
           <div class="col-12 col-md-6 col-xl-4 mb-3">
-            <article class="catalog-card h-100">
+            <article class="catalog-card h-100" [class.catalog-card-saved]="product.isAlreadySaved">
               @if (product.imageUrl) { <img class="catalog-image" [src]="product.imageUrl" [alt]="product.name || ('::Catalog:ProductImage' | abpLocalization)" /> }
               <div class="p-3">
+                @if (product.isAlreadySaved) { <span class="catalog-saved-badge">{{ '::Catalog:AlreadySavedBadge' | abpLocalization }}</span> }
                 <h3 class="h5">{{ product.name || ('::Catalog:Unavailable' | abpLocalization) }}</h3>
                 <p class="mb-1"><strong>{{ '::Catalog:Brand' | abpLocalization }}:</strong> {{ product.brand || ('::Catalog:Unavailable' | abpLocalization) }}</p>
                 <p class="mb-3"><strong>{{ '::Catalog:Category' | abpLocalization }}:</strong> {{ product.category || ('::Catalog:Unavailable' | abpLocalization) }}</p>
@@ -58,7 +59,9 @@
     <section id="catalog-detail" class="catalog-detail card p-3 p-md-4 mt-4" aria-live="polite">
       <div class="d-flex flex-wrap justify-content-between gap-2 align-items-start">
         <div><p class="catalog-eyebrow mb-1">{{ '::Catalog:DetailEyebrow' | abpLocalization }}</p><h2 class="h4">{{ product.name || ('::Catalog:Unavailable' | abpLocalization) }}</h2></div>
-        <button class="btn btn-primary" type="button" (click)="saveSelected()" [disabled]="saving() || !product.code">{{ (saving() ? '::Catalog:Saving' : '::Catalog:Save') | abpLocalization }}</button>
+        <button class="btn" [class.btn-primary]="!product.isAlreadySaved" [class.btn-danger]="product.isAlreadySaved" type="button" (click)="saveSelected()" [disabled]="saving() || !product.code || product.isAlreadySaved">
+          {{ (saving() ? '::Catalog:Saving' : product.isAlreadySaved ? (saveState() === 'saved' ? '::Catalog:SavedButton' : '::Catalog:AlreadySavedButton') : '::Catalog:Save') | abpLocalization }}
+        </button>
       </div>
       @if (loadingDetails()) { <p class="catalog-state mt-2 mb-0" role="status">{{ '::Catalog:LoadingDetails' | abpLocalization }}</p> }
       @if (saveMessageKey(); as message) { <div class="alert alert-success mt-2" role="status">{{ message | abpLocalization }}</div> }

@@ -27,6 +27,7 @@ export class Catalogo {
   readonly errorKey = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly saveMessageKey = signal<string | null>(null);
+  readonly saveState = signal<'saved' | 'already-saved' | null>(null);
   query = '';
   barcode = '';
 
@@ -41,6 +42,7 @@ export class Catalogo {
     this.errorKey.set(null);
     this.errorMessage.set(null);
     this.saveMessageKey.set(null);
+    this.saveState.set(null);
   }
 
   search(): void {
@@ -102,6 +104,7 @@ export class Catalogo {
     this.errorKey.set(null);
     this.errorMessage.set(null);
     this.saveMessageKey.set(null);
+    this.saveState.set(null);
     requestAnimationFrame(() => {
       document.getElementById('catalog-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -129,7 +132,12 @@ export class Catalogo {
     this.saveMessageKey.set(null);
     this.productoService.saveExternal({ barcode: product.code }).subscribe({
       next: result => {
+        this.saveState.set(result.yaExistia ? 'already-saved' : 'saved');
         this.saveMessageKey.set(result.yaExistia ? '::Catalog:AlreadySaved' : '::Catalog:Saved');
+        this.selected.update(current => current ? { ...current, isAlreadySaved: true } : current);
+        this.results.update(items => items.map(item => item.code === product.code
+          ? { ...item, isAlreadySaved: true }
+          : item));
         this.saving.set(false);
       },
       error: error => {

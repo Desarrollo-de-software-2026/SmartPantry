@@ -8,6 +8,7 @@ public class ExternalProductDto
     public string Category { get; set; } = string.Empty;
     public string Quantity { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
+    public bool IsAlreadySaved { get; set; }
     public string? Ingredients { get; set; }
     public string? Allergens { get; set; }
     public string? NutriScore { get; set; }

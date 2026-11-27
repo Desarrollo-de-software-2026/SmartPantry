@@ -90,11 +90,18 @@ public class OpenFoodFactsProductCatalogClient : IExternalProductCatalogClient
         int pageSize,
         CancellationToken cancellationToken = default)
     {
+        // Trae un bloque amplio de resultados relevantes y recién después los
+        // reordena por calidad de datos. Así, un producto con foto que estaba
+        // después de los primeros diez también puede aparecer en la primera página.
+        const int rankingBatchSize = 50;
+        var requestedOffset = (long)(page - 1) * pageSize;
+        var externalPage = (int)(requestedOffset / rankingBatchSize) + 1;
+        var offsetInsideBatch = (int)(requestedOffset % rankingBatchSize);
         var request = new
         {
             q = query.Trim(),
-            page,
-            page_size = pageSize,
+            page = externalPage,
+            page_size = rankingBatchSize,
             langs = new[] { "es", "en" },
             fields = new[]
             {
@@ -151,6 +158,8 @@ public class OpenFoodFactsProductCatalogClient : IExternalProductCatalogClient
                 .OrderByDescending(HasImageAndBasicData)
                 .ThenByDescending(product => !string.IsNullOrWhiteSpace(product.ImageUrl))
                 .ThenByDescending(CompletenessScore)
+                .Skip(offsetInsideBatch)
+                .Take(pageSize)
                 .ToList();
 
             _logger.LogInformation(

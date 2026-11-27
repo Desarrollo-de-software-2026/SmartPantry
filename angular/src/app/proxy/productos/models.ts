@@ -14,6 +14,7 @@ export interface ExternalProductDto {
   category?: string;
   quantity?: string;
   imageUrl?: string;
+  isAlreadySaved?: boolean;
   ingredients?: string | null;
   allergens?: string | null;
   nutriScore?: string | null;
