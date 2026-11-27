@@ -9,6 +9,7 @@ public interface IItemDespensaAppService : IApplicationService
 {
     Task<PagedResultDto<ItemDespensaDto>> GetListAsync(PagedAndSortedResultRequestDto input);
     Task<ItemDespensaDto> UpdateAsync(Guid id, UpdateItemDespensaDto input);
+    Task<ItemDespensaDto> CreateAsync(CreateItemDespensaDto input);
     Task MarkAsConsumedAsync(Guid id);
     Task DeleteAsync(Guid id);
 }

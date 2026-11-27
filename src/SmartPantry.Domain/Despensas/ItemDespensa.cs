@@ -55,4 +55,8 @@ public class ItemDespensa : Entity<Guid>
     {
         EstaConsumido = true;
     }
+    public void ActualizarNota(string texto)
+    {
+        Nota = new Nota(texto?.Trim() ?? string.Empty);
+    }
 }

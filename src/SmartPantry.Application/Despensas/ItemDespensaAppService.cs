@@ -80,6 +80,11 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
                 ? new FechaVencimiento(input.FechaVencimiento.Value.Date)
                 : null);
 
+        if (input.Nota != null)
+        {
+            item.ActualizarNota(input.Nota);
+        }
+
         await _itemRepository.UpdateAsync(item);
         return await MapItemAsync(item);
     }
@@ -131,6 +136,9 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
 
     private static ItemDespensaDto MapItem(ItemDespensa item, string? productName)
     {
+        var hoy = DateTime.Today;
+        var vencimiento = item.FechaVencimiento?.FechaVenc.Date;
+
         return new ItemDespensaDto
         {
             Id = item.Id,
@@ -139,7 +147,46 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
             Cantidad = item.Cantidad?.Monto,
             Unidad = item.Cantidad?.Unidad,
             FechaVencimiento = item.FechaVencimiento?.FechaVenc,
+            Nota = item.Nota?.Texto,
+            EstaVencido = !item.EstaConsumido && vencimiento.HasValue && vencimiento.Value < hoy,
+            ProximoAVencer = !item.EstaConsumido && vencimiento.HasValue && vencimiento.Value >= hoy && vencimiento.Value <= hoy.AddDays(7),
             EstaConsumido = item.EstaConsumido
         };
+    }
+
+    public async Task<ItemDespensaDto> CreateAsync(CreateItemDespensaDto input)
+    {
+        var userId = GetCurrentUserId();
+
+        var product = await _productoRepository.FindAsync(input.IdProducto);
+        if (product == null)
+        {
+            throw new EntityNotFoundException(typeof(Producto), input.IdProducto);
+        }
+
+        var pantry = await _despensaRepository.FirstOrDefaultAsync(
+            x => x.IdUsuario == userId);
+
+        if (pantry == null)
+        {
+            pantry = new Despensa(GuidGenerator.Create(), userId);
+            await _despensaRepository.InsertAsync(pantry);
+        }
+
+        var item = new ItemDespensa(
+            GuidGenerator.Create(),
+            product.Id,
+            input.Cantidad.HasValue
+                ? new Cantidad(input.Cantidad.Value, input.Unidad!.Trim())
+                : null,
+            input.FechaVencimiento.HasValue
+                ? new FechaVencimiento(input.FechaVencimiento.Value.Date)
+                : null,
+            new Nota(input.Nota?.Trim() ?? string.Empty));
+
+        pantry.AgregarItem(item);
+        await _itemRepository.InsertAsync(item);
+
+        return MapItem(item, product.Nombre);
     }
 }

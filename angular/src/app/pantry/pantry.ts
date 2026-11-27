@@ -64,6 +64,7 @@ export class Pantry {
       cantidad: [null as number | null, [Validators.min(0)]],
       unidad: ['', [Validators.maxLength(20)]],
       fechaVencimiento: ['', [validCalendarDate]],
+      nota: ['', [Validators.maxLength(250)]],
     },
     { validators: quantityUnitPairValidator },
   );
@@ -94,6 +95,7 @@ export class Pantry {
       cantidad: item.cantidad ?? null,
       unidad: item.unidad ?? '',
       fechaVencimiento: item.fechaVencimiento?.slice(0, 10) ?? '',
+      nota: item.nota ?? '',
     });
     this.editOpen.set(true);
   }
@@ -118,6 +120,7 @@ export class Pantry {
       cantidad: value.cantidad,
       unidad: value.cantidad === null ? null : value.unidad?.trim() || null,
       fechaVencimiento: value.fechaVencimiento || null,
+      nota: value.nota?.trim() ?? '',
     }, { skipHandleError: true }).subscribe({
       next: () => {
         this.saving.set(false);
