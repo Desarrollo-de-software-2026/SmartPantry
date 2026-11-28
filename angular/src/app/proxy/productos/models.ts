@@ -13,6 +13,10 @@ export interface ExternalProductDto {
   brand?: string;
   quantity?: string;
   imageUrl?: string;
+  ingredientsText?: string;
+  allergens?: string[];
+  matchedPreferences?: string[];
+  preferenceDataAvailable?: boolean;
   energyKcal100g?: number | null;
   fat100g?: number | null;
   sugars100g?: number | null;

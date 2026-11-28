@@ -1,0 +1,37 @@
+<main class="metrics-page container-fluid py-4">
+  <header class="mb-4">
+    <p class="eyebrow mb-1">{{ '::Administration:Eyebrow' | abpLocalization }}</p>
+    <h1 class="h2 mb-1">{{ '::Administration:Title' | abpLocalization }}</h1>
+    <p class="text-secondary mb-0">{{ '::Administration:Subtitle' | abpLocalization }}</p>
+  </header>
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ '::Administration:Error' | abpLocalization }}</div>
+  } @else if (metrics(); as data) {
+    <section class="metric-grid" aria-label="{{ '::Administration:Title' | abpLocalization }}">
+      <article class="card metric-card"><div class="card-body"><p>{{ '::Administration:Users' | abpLocalization }}</p><strong>{{ data.usuariosTotales }}</strong></div></article>
+      <article class="card metric-card"><div class="card-body"><p>{{ '::Administration:ActiveUsers' | abpLocalization }}</p><strong>{{ data.usuariosActivos }}</strong></div></article>
+      <article class="card metric-card"><div class="card-body"><p>{{ '::Administration:DisabledUsers' | abpLocalization }}</p><strong>{{ data.usuariosDeshabilitados }}</strong></div></article>
+      <article class="card metric-card"><div class="card-body"><p>{{ '::Administration:PantryItems' | abpLocalization }}</p><strong>{{ data.itemsDespensa }}</strong></div></article>
+      <article class="card metric-card"><div class="card-body"><p>{{ '::Administration:Alerts' | abpLocalization }}</p><strong>{{ data.alertasActivas }}</strong></div></article>
+    </section>
+    <section class="integration-card card mt-4">
+      <div class="card-body">
+        <h2 class="h5">{{ '::Administration:ExternalIntegration' | abpLocalization }}</h2>
+        <div class="metric-grid">
+          <article><p>{{ '::Administration:ExternalRequests' | abpLocalization }}</p><strong>{{ data.integracionExterna.requests }}</strong></article>
+          <article><p>{{ '::Administration:ExternalSuccesses' | abpLocalization }}</p><strong>{{ data.integracionExterna.successes }}</strong></article>
+          <article><p>{{ '::Administration:ExternalNotFound' | abpLocalization }}</p><strong>{{ data.integracionExterna.notFound }}</strong></article>
+          <article><p>{{ '::Administration:ExternalErrors' | abpLocalization }}</p><strong>{{ data.integracionExterna.errors }}</strong></article>
+          <article><p>{{ '::Administration:ExternalLatency' | abpLocalization }}</p><strong>{{ data.integracionExterna.averageLatencyMilliseconds | number:'1.0-0' }}</strong></article>
+        </div>
+        <p class="small text-secondary mt-3 mb-0">
+          @if (data.integracionExterna.lastErrorAtUtc) {
+            {{ '::Administration:ExternalLastError' | abpLocalization }}: {{ data.integracionExterna.lastErrorCode }} · {{ data.integracionExterna.lastErrorAtUtc | date:'short' }}
+          } @else { {{ '::Administration:ExternalNoErrors' | abpLocalization }} }
+        </p>
+      </div>
+    </section>
+  } @else {
+    <div class="alert alert-info" role="status">{{ '::Administration:Loading' | abpLocalization }}</div>
+  }
+</main>

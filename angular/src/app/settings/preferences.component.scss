@@ -1,0 +1,8 @@
+.preferences-page { max-width: 980px; margin: 0 auto; }
+.eyebrow { color: var(--lpx-brand); font-size: .75rem; font-weight: 700; letter-spacing: .09em; }
+.preference-card { border: 1px solid var(--bs-border-color); border-radius: 1rem; }
+.allergen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .75rem; }
+.allergen-option { display: flex; gap: .55rem; align-items: center; padding: .6rem .75rem; border: 1px solid var(--bs-border-color); border-radius: .65rem; }
+.days-input { max-width: 140px; }
+.custom-term { max-width: 560px; }
+.selected-terms { display: flex; flex-wrap: wrap; gap: .5rem; }

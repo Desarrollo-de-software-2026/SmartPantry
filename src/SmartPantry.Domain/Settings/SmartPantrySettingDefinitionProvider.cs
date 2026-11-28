@@ -6,7 +6,11 @@ public class SmartPantrySettingDefinitionProvider : SettingDefinitionProvider
 {
     public override void Define(ISettingDefinitionContext context)
     {
-        //Define your own settings here. Example:
-        //context.Add(new SettingDefinition(SmartPantrySettings.MySetting1));
+        var preferences = new SettingDefinition(
+            SmartPantrySettings.PreferenciasAlimentarias,
+            "",
+            isVisibleToClients: false);
+        preferences.Providers.Add("U");
+        context.Add(preferences);
     }
 }

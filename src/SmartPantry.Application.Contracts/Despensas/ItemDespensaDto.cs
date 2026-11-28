@@ -13,6 +13,7 @@ public class ItemDespensaDto : EntityDto<Guid>
     public string? Unidad { get; set; }
     public DateTime? FechaVencimiento { get; set; }
     public bool EstaConsumido { get; set; }
+    public string? AdvertenciaVencimiento { get; set; }
 }
 
 public class UpdateItemDespensaDto : IValidatableObject

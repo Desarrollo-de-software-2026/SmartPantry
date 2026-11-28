@@ -20,6 +20,11 @@ public static class SmartPantryPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
+
+    public static class Administration
+    {
+        public const string Default = GroupName + ".Administration";
+    }
     
     //Add your own permission names. Example:
     //public const string MyPermission1 = GroupName + ".MyPermission1";

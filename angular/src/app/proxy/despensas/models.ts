@@ -7,6 +7,7 @@ export interface ItemDespensaDto extends EntityDto<string> {
   unidad?: string | null;
   fechaVencimiento?: string | null;
   estaConsumido?: boolean;
+  advertenciaVencimiento?: string | null;
 }
 
 export interface UpdateItemDespensaDto {

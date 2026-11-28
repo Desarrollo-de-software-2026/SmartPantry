@@ -1,0 +1,7 @@
+.lookup-page { max-width: 920px; margin: 0 auto; }
+.lookup-form { max-width: 620px; }
+.eyebrow { color: var(--lpx-brand); font-size: .75rem; font-weight: 700; letter-spacing: .09em; }
+.product-detail { border-radius: 1rem; }
+.product-layout { display: grid; grid-template-columns: minmax(120px, 190px) 1fr; gap: 1.25rem; align-items: start; }
+.product-image { width: 100%; max-height: 220px; object-fit: contain; }
+@media (max-width: 575.98px) { .product-layout { grid-template-columns: 1fr; } .product-image { max-width: 160px; } }

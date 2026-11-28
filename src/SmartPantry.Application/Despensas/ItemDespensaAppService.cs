@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SmartPantry.Despensa;
@@ -11,6 +12,8 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.SettingManagement;
+using SmartPantry.Preferencias;
 
 namespace SmartPantry.Despensas;
 
@@ -27,17 +30,20 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
     private readonly IRepository<ItemDespensa, Guid> _itemRepository;
     private readonly IRepository<Producto, Guid> _productoRepository;
     private readonly IRepository<AdvertenciaVencimiento, Guid> _advertenciaRepository;
+    private readonly ISettingManager _settingManager;
 
     public ItemDespensaAppService(
         IRepository<Despensa, Guid> despensaRepository,
         IRepository<ItemDespensa, Guid> itemRepository,
         IRepository<Producto, Guid> productoRepository,
-        IRepository<AdvertenciaVencimiento, Guid> advertenciaRepository)
+        IRepository<AdvertenciaVencimiento, Guid> advertenciaRepository,
+        ISettingManager settingManager)
     {
         _despensaRepository = despensaRepository;
         _itemRepository = itemRepository;
         _productoRepository = productoRepository;
         _advertenciaRepository = advertenciaRepository;
+        _settingManager = settingManager;
     }
 
     public async Task<PagedResultDto<ItemDespensaDto>> GetListAsync(PagedAndSortedResultRequestDto input)
@@ -62,10 +68,20 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
             ? new List<Producto>()
             : await _productoRepository.GetListAsync(x => productIds.Contains(x.Id));
         var productNames = products.ToDictionary(x => x.Id, x => x.Nombre);
+        var itemIds = items.Select(x => x.Id).ToList();
+        var warnings = itemIds.Count == 0
+            ? new List<AdvertenciaVencimiento>()
+            : await _advertenciaRepository.GetListAsync(x => itemIds.Contains(x.ItemDespensaId) && x.EstaActiva);
+        var warningTypes = await UserWantsExpiryAlertsAsync()
+            ? warnings.ToDictionary(x => x.ItemDespensaId, x => x.TipoAdvertencia)
+            : new Dictionary<Guid, string>();
 
         return new PagedResultDto<ItemDespensaDto>(
             totalCount,
-            items.Select(x => MapItem(x, productNames.GetValueOrDefault(x.IdProducto))).ToList());
+            items.Select(x => MapItem(
+                x,
+                productNames.GetValueOrDefault(x.IdProducto),
+                warningTypes.GetValueOrDefault(x.Id))).ToList());
     }
 
     public async Task<ItemDespensaDto> UpdateAsync(Guid id, UpdateItemDespensaDto input)
@@ -126,10 +142,33 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
     private async Task<ItemDespensaDto> MapItemAsync(ItemDespensa item)
     {
         var product = await _productoRepository.FindAsync(item.IdProducto);
-        return MapItem(item, product?.Nombre);
+        var warning = await UserWantsExpiryAlertsAsync()
+            ? await _advertenciaRepository.FirstOrDefaultAsync(x => x.ItemDespensaId == item.Id && x.EstaActiva)
+            : null;
+        return MapItem(item, product?.Nombre, warning?.TipoAdvertencia);
     }
 
-    private static ItemDespensaDto MapItem(ItemDespensa item, string? productName)
+    private async Task<bool> UserWantsExpiryAlertsAsync()
+    {
+        var userId = GetCurrentUserId();
+        var json = await _settingManager.GetOrNullAsync(
+            SmartPantry.Settings.SmartPantrySettings.PreferenciasAlimentarias,
+            "U",
+            userId.ToString(),
+            true);
+        if (string.IsNullOrWhiteSpace(json)) return true;
+
+        try
+        {
+            return JsonSerializer.Deserialize<PreferenciasAlimentariasDto>(json)?.AlertasVencimiento ?? true;
+        }
+        catch (JsonException)
+        {
+            return true;
+        }
+    }
+
+    private static ItemDespensaDto MapItem(ItemDespensa item, string? productName, string? warningType)
     {
         return new ItemDespensaDto
         {
@@ -139,7 +178,8 @@ public class ItemDespensaAppService : ApplicationService, IItemDespensaAppServic
             Cantidad = item.Cantidad?.Monto,
             Unidad = item.Cantidad?.Unidad,
             FechaVencimiento = item.FechaVencimiento?.FechaVenc,
-            EstaConsumido = item.EstaConsumido
+            EstaConsumido = item.EstaConsumido,
+            AdvertenciaVencimiento = warningType
         };
     }
 }
